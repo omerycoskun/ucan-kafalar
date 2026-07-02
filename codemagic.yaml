@@ -1,0 +1,44 @@
+# Codemagic CI/CD — Uçan Kafalar iOS build
+#
+# KURULUM (Apple Developer hesabı hazır olunca, Codemagic arayüzünde):
+# 1. codemagic.io → GitHub ile giriş → bu repoyu ekle.
+# 2. Teams → Integrations → App Store Connect: bir API key oluşturup bağla
+#    (App Store Connect > Users and Access > Integrations > App Store Connect API).
+#    Bağlantıya bir isim ver ve aşağıdaki "app_store_connect: auth: integration"
+#    bunu otomatik kullanır. (İsim farklıysa integration adını belirt.)
+# 3. App Store Connect'te "Uçan Kafalar" uygulamasını oluştur; bundle id:
+#    com.ucankafalar.flappybird  (aşağıdakiyle birebir aynı olmalı).
+# 4. Bu workflow'u çalıştır → imzalı .ipa üretir ve TestFlight'a yükler.
+
+workflows:
+  ios-release:
+    name: Uçan Kafalar iOS
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.ucankafalar.flappybird
+    scripts:
+      - name: Kod imzalama profillerini hazırla
+        script: xcode-project use-profiles
+      - name: Flutter paketleri
+        script: flutter pub get
+      - name: CocoaPods
+        script: find . -name "Podfile" -execdir pod install \;
+      - name: IPA derle
+        script: |
+          flutter build ipa --release \
+            --build-name=1.0.0 \
+            --build-number=$(($(date +%s) / 60)) \
+            --export-options-plist=/Users/builder/export_options.plist
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
