@@ -1,0 +1,16 @@
+# Uygulama ikonu üretimi: assets/icon/app_icon.png kaynağından tüm platformlar.
+# Çalıştır: dart run flutter_launcher_icons
+flutter_launcher_icons:
+  image_path: "assets/icon/app_icon.png"
+  # iOS: App Store kare/opak ikon; sistem köşeleri otomatik yuvarlar.
+  ios: true
+  remove_alpha_ios: true
+  # Android: legacy + adaptive ikon (koyu arka plan, ikon önde).
+  android: "ic_launcher"
+  adaptive_icon_background: "#0d1531"
+  adaptive_icon_foreground: "assets/icon/app_icon.png"
+  # Web favicon + PWA ikonları.
+  web:
+    generated: true
+    background_color: "#0d1531"
+    theme_color: "#0d1531"
