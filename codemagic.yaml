@@ -61,11 +61,17 @@ workflows:
     scripts:
       - name: Flutter paketleri
         script: flutter pub get
-      - name: AAB derle
+      - name: AAB derle (Google Play için)
         script: |
           flutter build appbundle --release \
             --build-name=1.0.0 \
             --build-number=$(($(date +%s) / 60))
+      - name: APK derle (telefona doğrudan kurmak için test)
+        script: |
+          flutter build apk --release \
+            --build-name=1.0.0 \
+            --build-number=$(($(date +%s) / 60))
     artifacts:
       - build/app/outputs/bundle/release/*.aab
+      - build/app/outputs/flutter-apk/*.apk
       - build/app/outputs/**/mapping.txt
