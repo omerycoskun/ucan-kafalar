@@ -5,11 +5,8 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 /// Android/iOS için AdMob reklam servisi.
 ///
-/// Reklam birimi kimlikleri:
-/// - iOS: gerçek AdMob kimlikleri (Uçan Kafalar iOS uygulaması).
-/// - Android: henüz gerçek AdMob uygulaması oluşturulmadığı için Google TEST
-///   kimlikleri. Android'e geçilince AdMob'da ayrı bir Android uygulaması açıp
-///   o kimlikleri buraya ve AndroidManifest.xml'e koymak gerekir.
+/// Reklam birimi kimlikleri: iOS ve Android için ayrı gerçek AdMob kimlikleri
+/// (aynı AdMob hesabı pub-1630797078588417; her platform ayrı uygulama).
 class AdService {
   static final AdService instance = AdService._();
   AdService._();
@@ -22,11 +19,11 @@ class AdService {
   static const int _interstitialEvery = 3; // her 3 oyun sonunda bir
 
   String get _interstitialUnit => Platform.isAndroid
-      ? 'ca-app-pub-3940256099942544/1033173712' // Android TEST
+      ? 'ca-app-pub-1630797078588417/8187820623' // Android gerçek (Geçiş)
       : 'ca-app-pub-1630797078588417/5980158365'; // iOS gerçek (Geçiş)
 
   String get _rewardedUnit => Platform.isAndroid
-      ? 'ca-app-pub-3940256099942544/5224354917' // Android TEST
+      ? 'ca-app-pub-1630797078588417/6781158624' // Android gerçek (Ödüllü)
       : 'ca-app-pub-1630797078588417/9726584846'; // iOS gerçek (Ödüllü)
 
   Future<void> initialize() async {
