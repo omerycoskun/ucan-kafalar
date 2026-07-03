@@ -42,3 +42,30 @@ workflows:
       app_store_connect:
         auth: integration
         submit_to_testflight: true
+
+  # ANDROID — Google Play için imzalı AAB üretir.
+  # KURULUM (Codemagic arayüzünde):
+  # 1. Teams/App settings → Code signing identities → Android keystores →
+  #    "Generate keystore" ile yeni bir keystore oluştur (ya da yükle).
+  #    Referans adını "ucan_kafalar_upload" koy (aşağıdakiyle aynı olmalı).
+  # 2. Bu workflow'u çalıştır → build/app/outputs/.../*.aab üretir.
+  # 3. Üretilen .aab'yi Google Play Console'a yükle (ilk sürüm için manuel).
+  android-release:
+    name: Uçan Kafalar Android
+    max_build_duration: 60
+    instance_type: linux_x2
+    environment:
+      flutter: stable
+      android_signing:
+        - ucan_kafalar_upload
+    scripts:
+      - name: Flutter paketleri
+        script: flutter pub get
+      - name: AAB derle
+        script: |
+          flutter build appbundle --release \
+            --build-name=1.0.0 \
+            --build-number=$(($(date +%s) / 60))
+    artifacts:
+      - build/app/outputs/bundle/release/*.aab
+      - build/app/outputs/**/mapping.txt
