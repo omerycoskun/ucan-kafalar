@@ -86,7 +86,10 @@ class _GameScreenState extends State<GameScreen> {
       body: Column(
         children: [
           Expanded(
-            child: Stack(
+            // RepaintBoundary: oyunun çizimini alttaki banner (platform view)
+            // compositing'inden yalıtır → boruların titremesi/takılması azalır.
+            child: RepaintBoundary(
+              child: Stack(
               children: [
                 GameWidget<FlappyGame>(
                   game: _game,
@@ -124,6 +127,7 @@ class _GameScreenState extends State<GameScreen> {
                     ),
                   ),
               ],
+              ),
             ),
           ),
           // Alt banner reklam (mobilde; web/masaüstünde no-op).
