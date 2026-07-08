@@ -7,7 +7,7 @@ enum Difficulty {
   // label, unlockInterval, pipeGap (geniş=kolay), pipeSpeed (yavaş=kolay)
   easy('Kolay', 105, 240, -200),
   medium('Orta', 70, 205, -270),
-  hard('Zor', 35, 148, -320),
+  hard('Zor', 35, 172, -285),
   // Macera: skor arttıkça borular giderek hızlanır (başlangıç değerleri).
   adventure('Macera', 50, 200, -115);
 

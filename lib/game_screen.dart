@@ -1,6 +1,7 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
+import 'ad_banner.dart';
 import 'ad_service.dart';
 import 'flappy_game.dart';
 import 'ui_common.dart';
@@ -82,43 +83,51 @@ class _GameScreenState extends State<GameScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.sky,
-      body: Stack(
+      body: Column(
         children: [
-          GameWidget<FlappyGame>(
-            game: _game,
-            overlayBuilderMap: {
-              'gameOver': (context, game) => _GameOverOverlay(
-                    result: _lastResult,
-                    onRestart: _restart,
-                    onMenu: _exitToMenu,
-                    // Reklamla devam yalnızca reklam hazırsa ve bu oyunda
-                    // henüz kullanılmadıysa gösterilir (web'de asla).
-                    onWatchContinue:
-                        (!_usedContinue && AdService.instance.canShowRewarded)
-                            ? _watchAndContinue
-                            : null,
-                    watchingAd: _watchingAd,
-                  ),
-              'pause': (context, game) => _PauseOverlay(
-                    onResume: _resume,
-                    onMenu: _exitToMenu,
-                  ),
-            },
-          ),
-          // Duraklat butonu (game-over / duraklatma dışında görünür).
-          if (_showPauseButton)
-            SafeArea(
-              child: Align(
-                alignment: Alignment.topRight,
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: _RoundIconButton(
-                    icon: Icons.pause,
-                    onTap: _pause,
-                  ),
+          Expanded(
+            child: Stack(
+              children: [
+                GameWidget<FlappyGame>(
+                  game: _game,
+                  overlayBuilderMap: {
+                    'gameOver': (context, game) => _GameOverOverlay(
+                          result: _lastResult,
+                          onRestart: _restart,
+                          onMenu: _exitToMenu,
+                          // Reklamla devam yalnızca reklam hazırsa ve bu oyunda
+                          // henüz kullanılmadıysa gösterilir (web'de asla).
+                          onWatchContinue: (!_usedContinue &&
+                                  AdService.instance.canShowRewarded)
+                              ? _watchAndContinue
+                              : null,
+                          watchingAd: _watchingAd,
+                        ),
+                    'pause': (context, game) => _PauseOverlay(
+                          onResume: _resume,
+                          onMenu: _exitToMenu,
+                        ),
+                  },
                 ),
-              ),
+                // Duraklat butonu (game-over / duraklatma dışında görünür).
+                if (_showPauseButton)
+                  SafeArea(
+                    child: Align(
+                      alignment: Alignment.topRight,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: _RoundIconButton(
+                          icon: Icons.pause,
+                          onTap: _pause,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
+          ),
+          // Alt banner reklam (mobilde; web/masaüstünde no-op).
+          const AdBanner(),
         ],
       ),
     );

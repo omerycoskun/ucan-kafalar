@@ -16,7 +16,7 @@ class AdService {
   int _gameOverCount = 0;
   bool _initialized = false;
 
-  static const int _interstitialEvery = 3; // her 3 oyun sonunda bir
+  static const int _interstitialEvery = 2; // her 2 oyun sonunda bir
 
   String get _interstitialUnit => Platform.isAndroid
       ? 'ca-app-pub-1630797078588417/8187820623' // Android gerçek (Geçiş)
