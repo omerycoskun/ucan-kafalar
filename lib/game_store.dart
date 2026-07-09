@@ -5,11 +5,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// açıldığını belirler (kolay = daha çok puan gerektirir).
 enum Difficulty {
   // label, unlockInterval, pipeGap (geniş=kolay), pipeSpeed (yavaş=kolay)
-  easy('Kolay', 105, 260, -180),
-  medium('Orta', 70, 230, -240),
-  hard('Zor', 35, 195, -255),
+  easy('Kolay', 30, 260, -180),
+  medium('Orta', 18, 230, -240),
+  hard('Zor', 10, 195, -255),
   // Macera: skor arttıkça borular giderek hızlanır (başlangıç değerleri).
-  adventure('Macera', 50, 200, -115);
+  adventure('Macera', 15, 200, -115);
 
   const Difficulty(this.label, this.unlockInterval, this.pipeGap, this.pipeSpeed);
 
