@@ -5,20 +5,18 @@ void main() {
   test('unlock threshold scales with difficulty interval', () {
     final store = GameStore.instance;
 
-    // Hard: 35'lik aralık. Karakter 2 -> 35, karakter 3 -> 70.
+    // Eşik = (karakter-1) * zorluğun unlockInterval'ı (değerden bağımsız test).
     store.setDifficultyForTest(Difficulty.hard);
     expect(store.unlockThreshold(1), 0);
-    expect(store.unlockThreshold(2), 35);
-    expect(store.unlockThreshold(3), 70);
+    expect(store.unlockThreshold(2), Difficulty.hard.unlockInterval);
+    expect(store.unlockThreshold(3), 2 * Difficulty.hard.unlockInterval);
 
-    // Easy: 105'lik aralık.
     store.setDifficultyForTest(Difficulty.easy);
-    expect(store.unlockThreshold(2), 105);
+    expect(store.unlockThreshold(2), Difficulty.easy.unlockInterval);
 
-    // Adventure (Macera): 50'lik aralık, skorla hızlanır.
     store.setDifficultyForTest(Difficulty.adventure);
-    expect(store.unlockThreshold(2), 50);
-    expect(store.unlockThreshold(3), 100);
+    expect(store.unlockThreshold(2), Difficulty.adventure.unlockInterval);
+    expect(store.unlockThreshold(3), 2 * Difficulty.adventure.unlockInterval);
     expect(Difficulty.adventure.isAdventure, isTrue);
     expect(Difficulty.hard.isAdventure, isFalse);
   });
