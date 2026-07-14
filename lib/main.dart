@@ -13,9 +13,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await GameStore.instance.load();
-  // Reklamları başlat (web/masaüstünde no-op). UI'ı bloklamaması için await yok.
-  AdService.instance.initialize();
   runApp(const FlappyApp());
+  // iOS ATT izin penceresi uygulama AKTİF olduğunda açılabilir; bu yüzden
+  // reklam başlatma (önce ATT izni ister) ilk kare çizildikten sonra yapılır.
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    AdService.instance.initialize();
+  });
 }
 
 /// Sadece debug modunda: `?screen=character|settings|game` ile doğrudan ilgili

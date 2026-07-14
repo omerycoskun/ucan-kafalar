@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 /// Android/iOS için AdMob reklam servisi.
@@ -29,6 +30,14 @@ class AdService {
   Future<void> initialize() async {
     if (_initialized) return;
     _initialized = true;
+    // iOS: reklamlardan önce ATT (takip izni) penceresini göster (App Store 2.1).
+    if (Platform.isIOS) {
+      final status =
+          await AppTrackingTransparency.trackingAuthorizationStatus;
+      if (status == TrackingStatus.notDetermined) {
+        await AppTrackingTransparency.requestTrackingAuthorization();
+      }
+    }
     await MobileAds.instance.initialize();
     _loadInterstitial();
     _loadRewarded();
