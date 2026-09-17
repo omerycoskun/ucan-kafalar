@@ -42,8 +42,8 @@ class CitySky extends PositionComponent with HasGameReference<ArcadeGame> {
     final moving = game.state != GameState.gameOver;
     for (final c in _clouds) {
       c.x -= c.speed * dt;
-      if (c.x < -120) {
-        c.x = size.x + 60;
+      if (c.x < -ArcadeGame.bleed / 2) {
+        c.x = size.x + ArcadeGame.bleed / 2;
         c.y = 40 + _rng.nextDouble() * 260;
       }
     }
@@ -55,8 +55,8 @@ class CitySky extends PositionComponent with HasGameReference<ArcadeGame> {
 
   @override
   void render(Canvas canvas) {
-    final rect = Rect.fromLTWH(0, 0, size.x, size.y);
-    canvas.clipRect(rect);
+    const b = ArcadeGame.bleed;
+    final rect = Rect.fromLTWH(-b, -b, size.x + 2 * b, size.y + b);
     canvas.drawRect(
       rect,
       Paint()
@@ -98,10 +98,11 @@ class CitySky extends PositionComponent with HasGameReference<ArcadeGame> {
     final paint = Paint()..color = color;
     final windowPaint = Paint()..color = const Color(0x66FFF3B0);
     final total = w * heights.length;
-    for (var rep = 0; rep < 2; rep++) {
+    const b = ArcadeGame.bleed;
+    for (var rep = -2; rep < 4; rep++) {
       for (var i = 0; i < heights.length; i++) {
         final x = i * w - offset + rep * total;
-        if (x > size.x || x + w < 0) continue;
+        if (x > size.x + b || x + w < -b) continue;
         final h = heights[i];
         final r = RRect.fromRectAndCorners(Rect.fromLTWH(x + 2, ground - h, w - 4, h),
             topLeft: const Radius.circular(6), topRight: const Radius.circular(6));

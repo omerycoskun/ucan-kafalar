@@ -12,8 +12,8 @@ import 'flappy_game.dart';
 class Ground extends PositionComponent with HasGameReference<FlyGame> {
   Ground()
       : super(
-          position: Vector2(0, ArcadeGame.virtualSize.y - FlyGame.groundHeight),
-          size: Vector2(ArcadeGame.virtualSize.x, FlyGame.groundHeight),
+          position: Vector2(-ArcadeGame.bleed, ArcadeGame.virtualSize.y - FlyGame.groundHeight),
+          size: Vector2(ArcadeGame.virtualSize.x + 2 * ArcadeGame.bleed, FlyGame.groundHeight + ArcadeGame.bleed),
           priority: 8,
         );
 
@@ -38,7 +38,7 @@ class Ground extends PositionComponent with HasGameReference<FlyGame> {
     canvas.drawRect(Rect.fromLTWH(0, 0, size.x, size.y), Paint()..color = const Color(0xFF6B5BD6));
     canvas.drawRect(Rect.fromLTWH(0, 0, size.x, 16), Paint()..color = const Color(0xFFFFC857));
     final stripe = Paint()..color = const Color(0xFFFF8F5A);
-    for (double x = -_offset; x < size.x; x += _tile) {
+    for (double x = -_offset + (ArcadeGame.bleed % _tile); x < size.x; x += _tile) {
       final path = Path()
         ..moveTo(x, 0)
         ..lineTo(x + 18, 0)
@@ -48,7 +48,7 @@ class Ground extends PositionComponent with HasGameReference<FlyGame> {
       canvas.drawPath(path, stripe);
     }
     final dot = Paint()..color = const Color(0x33FFFFFF);
-    for (double x = -_offset; x < size.x; x += _tile) {
+    for (double x = -_offset + (ArcadeGame.bleed % _tile); x < size.x; x += _tile) {
       canvas.drawCircle(Offset(x + 20, 44), 5, dot);
     }
     canvas.drawLine(

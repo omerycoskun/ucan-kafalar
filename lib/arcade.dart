@@ -22,6 +22,13 @@ abstract class ArcadeGame extends FlameGame with HasCollisionDetection, TapCallb
 
   static final Vector2 virtualSize = Vector2(400, 711);
 
+  /// Ekran oranı 400x711'den farklıysa (uzun telefon, iPad) kenarlarda boşluk
+  /// kalmasın diye arka planlar ve engeller bu kadar taşarak çizilir.
+  static const double bleed = 700;
+
+  /// Kameranın o an gösterdiği dünya alanı (letterbox dahil).
+  Rect get visibleRect => camera.visibleWorldRect;
+
   GameMode get mode;
 
   final GameStore store = GameStore.instance;
@@ -60,7 +67,7 @@ abstract class ArcadeGame extends FlameGame with HasCollisionDetection, TapCallb
       anchor: Anchor.center,
       priority: 20,
       textRenderer: TextPaint(
-        style: const TextStyle(fontSize: 50, fontWeight: FontWeight.w900, color: Colors.white, shadows: shadow),
+        style: const TextStyle(fontFamily: 'Roboto', fontSize: 50, fontWeight: FontWeight.w900, color: Colors.white, shadows: shadow),
       ),
     );
     world.add(StarPickup(position: Vector2(26, 24), decorative: true)..priority = 20);
@@ -70,7 +77,7 @@ abstract class ArcadeGame extends FlameGame with HasCollisionDetection, TapCallb
       anchor: Anchor.centerLeft,
       priority: 20,
       textRenderer: TextPaint(
-        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: Color(0xFFFFD84D), shadows: shadow),
+        style: const TextStyle(fontFamily: 'Roboto', fontSize: 24, fontWeight: FontWeight.w900, color: Color(0xFFFFD84D), shadows: shadow),
       ),
     );
     messageText = TextComponent(
@@ -79,7 +86,7 @@ abstract class ArcadeGame extends FlameGame with HasCollisionDetection, TapCallb
       anchor: Anchor.center,
       priority: 20,
       textRenderer: TextPaint(
-        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white, shadows: shadow),
+        style: const TextStyle(fontFamily: 'Roboto', fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white, shadows: shadow),
       ),
     );
     world.addAll([scoreText, starText, messageText]);

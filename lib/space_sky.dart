@@ -18,8 +18,9 @@ class SpaceSky extends PositionComponent {
   @override
   FutureOr<void> onLoad() {
     size = ArcadeGame.virtualSize.clone();
-    for (var i = 0; i < 70; i++) {
-      _stars.add(Offset(_rng.nextDouble() * size.x, _rng.nextDouble() * size.y * 0.8));
+    const b = ArcadeGame.bleed;
+    for (var i = 0; i < 200; i++) {
+      _stars.add(Offset(-b + _rng.nextDouble() * (size.x + 2 * b), -b + _rng.nextDouble() * (size.y * 0.8 + b)));
     }
   }
 
@@ -31,7 +32,8 @@ class SpaceSky extends PositionComponent {
 
   @override
   void render(Canvas canvas) {
-    final rect = Rect.fromLTWH(0, 0, size.x, size.y);
+    const b = ArcadeGame.bleed;
+    final rect = Rect.fromLTWH(-b, -b, size.x + 2 * b, size.y + 2 * b);
     canvas.drawRect(
       rect,
       Paint()

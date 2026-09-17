@@ -39,8 +39,8 @@ class CharacterScreen extends StatelessWidget {
               Expanded(
                 child: GridView.builder(
                   padding: const EdgeInsets.all(14),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 170,
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
                     childAspectRatio: 0.78,

@@ -31,13 +31,14 @@ class TowerPair extends PositionComponent with HasGameReference<FlyGame> {
   @override
   FutureOr<void> onLoad() {
     final gap = game.difficulty.gap;
+    const b = ArcadeGame.bleed;
     final topHeight = gapY - gap / 2;
     final bottomTop = gapY + gap / 2;
     final colors = palettes[palette];
     addAll([
-      _Tower(size: Vector2(towerWidth, topHeight), position: Vector2.zero(), capAtBottom: true, colors: colors),
+      _Tower(size: Vector2(towerWidth, topHeight + b), position: Vector2(0, -b), capAtBottom: true, colors: colors),
       _Tower(
-        size: Vector2(towerWidth, ArcadeGame.virtualSize.y - bottomTop),
+        size: Vector2(towerWidth, ArcadeGame.virtualSize.y - bottomTop + b),
         position: Vector2(0, bottomTop),
         capAtBottom: false,
         colors: colors,
@@ -55,7 +56,7 @@ class TowerPair extends PositionComponent with HasGameReference<FlyGame> {
       scored = true;
       game.addPoint();
     }
-    if (position.x < -towerWidth - 10) removeFromParent();
+    if (position.x < game.visibleRect.left - towerWidth - 20) removeFromParent();
   }
 }
 

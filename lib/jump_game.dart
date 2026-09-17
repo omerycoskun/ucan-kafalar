@@ -62,7 +62,8 @@ class JumpGame extends ArcadeGame {
   void _spawnInitialPlatforms() {
     world.add(Ledge(position: Vector2(_w / 2, _h - 60)));
     double y = _h - 60;
-    while (y > -_platformGap) {
+    final spawnTop = min(0.0, visibleRect.top) - _platformGap;
+    while (y > spawnTop) {
       y -= _platformGap;
       _spawnLedgeAt(y);
     }
@@ -126,7 +127,7 @@ class JumpGame extends ArcadeGame {
       for (final c in world.children) {
         if (c is Ledge) {
           c.position.y += delta;
-          if (c.position.y > _h + 40) {
+          if (c.position.y > max(_h, visibleRect.bottom) + 40) {
             c.removeFromParent();
           } else if (c.position.y < topY) {
             topY = c.position.y;
@@ -134,11 +135,12 @@ class JumpGame extends ArcadeGame {
         } else if (c is Enemy || (c is StarPickup && !c.decorative)) {
           final p = c as PositionComponent;
           p.position.y += delta;
-          if (p.position.y > _h + 40) p.removeFromParent();
+          if (p.position.y > max(_h, visibleRect.bottom) + 40) p.removeFromParent();
         }
       }
       if (topY == double.infinity) topY = 0;
-      while (topY > -_platformGap) {
+      final spawnTop = min(0.0, visibleRect.top) - _platformGap;
+      while (topY > spawnTop) {
         topY -= _platformGap;
         _spawnLedgeAt(topY);
       }
@@ -152,7 +154,7 @@ class JumpGame extends ArcadeGame {
       if (scoreText.text != '$score') scoreText.text = '$score';
     }
 
-    if (jumper.position.y - jumper.size.y / 2 > _h) endGame();
+    if (jumper.position.y - jumper.size.y / 2 > max(_h, visibleRect.bottom)) endGame();
   }
 
   /// Jumper bir platforma üstten değince çağrılır.

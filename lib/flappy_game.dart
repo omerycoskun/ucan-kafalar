@@ -107,7 +107,7 @@ class FlyGame extends ArcadeGame {
     final playable = ArcadeGame.virtualSize.y - groundHeight - margin * 2;
     final gapY = margin + _random.nextDouble() * playable;
     world.add(TowerPair(
-      x: ArcadeGame.virtualSize.x + 40,
+      x: max(ArcadeGame.virtualSize.x, visibleRect.right) + 30,
       gapY: gapY,
       palette: _random.nextInt(TowerPair.palettes.length),
       withStar: _random.nextDouble() < starChance,
