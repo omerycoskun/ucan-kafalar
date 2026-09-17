@@ -8,15 +8,15 @@ import 'flappy_game.dart';
 
 /// Uç modunda oyuncunun kafası.
 class Flyer extends KafaSprite with CollisionCallbacks, HasGameReference<FlyGame> {
-  Flyer({required super.kafa, required Vector2 position}) : super(size: 84, position: position, priority: 5);
+  Flyer({required super.kafa, required Vector2 position}) : super(size: 104, position: position, priority: 5);
 
   double velocity = 0;
 
   @override
   FutureOr<void> onLoad() async {
     await super.onLoad();
-    // Yuvarlak kafaya oturan, biraz küçültülmüş adil çarpışma alanı.
-    add(CircleHitbox(radius: size.x * 0.3, position: size / 2 + Vector2(0, size.y * 0.06), anchor: Anchor.center));
+    // Görsel omuzlarla birlikte: çarpışma alanı eski boyutta (r≈25) ve kafaya yakın.
+    add(CircleHitbox(radius: 25, position: size / 2 + Vector2(0, size.y * 0.02), anchor: Anchor.center));
   }
 
   void flap() => velocity = FlyGame.flapVelocity;

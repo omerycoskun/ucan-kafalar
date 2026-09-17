@@ -1,9 +1,11 @@
 import 'package:flame/components.dart';
+import 'package:flame/flame.dart';
 import 'package:flame_test/flame_test.dart';
 import 'package:flappybird/arcade.dart';
 import 'package:flappybird/flappy_game.dart';
 import 'package:flappybird/game_store.dart';
 import 'package:flappybird/jump_game.dart';
+import 'package:flappybird/kafa.dart';
 import 'package:flappybird/ledge.dart';
 import 'package:flappybird/pipe.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -19,6 +21,14 @@ void step(ArcadeGame game, double seconds, {void Function(double t)? each}) {
 }
 
 void main() {
+  setUpAll(() {
+    // Test ortamında asset resim çözme beklemede kalabiliyor: karakter
+    // sprite'larını önbelleğe yer tutucu görsel olarak önceden koy.
+    for (final k in kKafalar) {
+      Flame.images.add(k.spritePath, renderKafaImage(k, 64));
+    }
+  });
+
   setUp(() async {
     // Testte ses eklentisi yok: sesleri kapat.
     await GameStore.instance.setSoundOn(false);

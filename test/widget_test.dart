@@ -28,8 +28,9 @@ void main() {
     expect(store.bestScore(GameMode.fly), 0);
   });
 
-  test('kafa müziği numarasıyla eşleşir', () {
+  test('karakter görseli ve müziği numarasıyla eşleşir', () {
     expect(kafaById(7).musicPath, 'background_music_7.mp3');
+    expect(kafaById(7).imageAsset, 'assets/images/characters/character_7.png');
     expect(kafaById(999).id, kKafalar.first.id);
   });
 }

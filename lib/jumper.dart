@@ -10,14 +10,14 @@ import 'ledge.dart';
 
 /// Zıpla modunda oyuncunun kafası.
 class Jumper extends KafaSprite with CollisionCallbacks, HasGameReference<JumpGame> {
-  Jumper({required super.kafa, required Vector2 position}) : super(size: 80, position: position, priority: 5);
+  Jumper({required super.kafa, required Vector2 position}) : super(size: 100, position: position, priority: 5);
 
   final Vector2 velocity = Vector2.zero();
 
   @override
   FutureOr<void> onLoad() async {
     await super.onLoad();
-    add(RectangleHitbox.relative(Vector2(0.56, 0.62), parentSize: size, position: size / 2 + Vector2(0, 6), anchor: Anchor.center));
+    add(RectangleHitbox.relative(Vector2(0.46, 0.52), parentSize: size, position: size / 2 + Vector2(0, 8), anchor: Anchor.center));
   }
 
   void reset(Vector2 startPosition) {

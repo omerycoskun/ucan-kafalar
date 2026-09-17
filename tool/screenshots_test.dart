@@ -6,12 +6,14 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
+import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flappybird/arcade.dart';
 import 'package:flappybird/character_screen.dart';
 import 'package:flappybird/flappy_game.dart';
 import 'package:flappybird/game_store.dart';
 import 'package:flappybird/jump_game.dart';
+import 'package:flappybird/kafa.dart';
 import 'package:flappybird/ledge.dart';
 import 'package:flappybird/menu_screen.dart';
 import 'package:flappybird/pipe.dart';
@@ -100,6 +102,20 @@ Widget _gameView(ArcadeGame game) => Scaffold(
       ),
     );
 
+/// Asset görsellerini gerçek (async) ortamda önceden çöz; aksi halde testte
+/// resimler boş çizilir ya da beklemede kalır.
+Future<void> _precache(WidgetTester tester) async {
+  await tester.runAsync(() async {
+    for (final k in kKafalar) {
+      await Flame.images.load(k.spritePath);
+      final ctx = _boundary.currentContext;
+      if (ctx != null && ctx.mounted) {
+        await precacheImage(AssetImage(k.imageAsset), ctx);
+      }
+    }
+  });
+}
+
 Future<void> _frames(WidgetTester tester, int n, void Function() each) async {
   for (var i = 0; i < n; i++) {
     each();
@@ -128,6 +144,7 @@ void main() {
 
       // 1) Ana menü
       await tester.pumpWidget(_frame(const MenuScreen()));
+      await _precache(tester);
       await tester.pump(const Duration(milliseconds: 100));
       await _capture(tester, d, 1);
 
@@ -175,6 +192,7 @@ void main() {
 
       // 4) Kafalar ekranı
       await tester.pumpWidget(_frame(const CharacterScreen()));
+      await _precache(tester);
       await tester.pump(const Duration(milliseconds: 100));
       await _capture(tester, d, 4);
 

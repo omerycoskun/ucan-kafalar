@@ -202,7 +202,7 @@ abstract class ArcadeGame extends FlameGame with HasCollisionDetection, TapCallb
   }
 }
 
-/// Oyuncunun kafası: bir kez rasterlanıp sprite olarak çizilir.
+/// Oyuncunun karakteri (assets/images/characters/character_N.png).
 class KafaSprite extends SpriteComponent {
   KafaSprite({required this.kafa, required double size, super.position, super.priority})
       : super(size: Vector2.all(size), anchor: Anchor.center);
@@ -210,8 +210,8 @@ class KafaSprite extends SpriteComponent {
   final Kafa kafa;
 
   @override
-  FutureOr<void> onLoad() {
-    sprite = Sprite(renderKafaImage(kafa, 160));
+  FutureOr<void> onLoad() async {
+    sprite = await Sprite.load(kafa.spritePath);
   }
 }
 

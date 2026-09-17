@@ -12,8 +12,8 @@ enum KafaEyes { round, happy, sleepy, glasses, star }
 /// Ağız tipi.
 enum KafaMouth { smile, open, tongue, o }
 
-/// Oyunun orijinal karakterleri ("kafalar"). Tamamen kodla çizilir; hiçbir
-/// gerçek kişiye ya da başka bir oyuna ait görsel kullanılmaz.
+/// Oyunun karakterleri. Görselleri assets/images/characters/character_N.png;
+/// [paintKafa] ile kodla çizim yalnızca ikon üretim aracında kullanılır.
 class Kafa {
   const Kafa({
     required this.id,
@@ -42,19 +42,25 @@ class Kafa {
   final bool blush;
 
   String get musicPath => 'background_music_$id.mp3';
+
+  /// Karakter görseli (şeffaf arka planlı PNG), Flame için `assets/images/` altı.
+  String get spritePath => 'characters/character_$id.png';
+
+  /// Flutter arayüzü için tam asset yolu.
+  String get imageAsset => 'assets/images/$spritePath';
 }
 
 const List<Kafa> kKafalar = [
-  Kafa(id: 1, name: 'Pofuduk', price: 0, face: Color(0xFFFFD34E), top: KafaTop.spiky, topColor: Color(0xFFFF7A2F), eyes: KafaEyes.round, mouth: KafaMouth.smile),
-  Kafa(id: 2, name: 'Zıpır', price: 10, face: Color(0xFF7BE3B6), top: KafaTop.cap, topColor: Color(0xFFE8413C), eyes: KafaEyes.happy, mouth: KafaMouth.tongue),
-  Kafa(id: 3, name: 'Pamuk', price: 25, face: Color(0xFFFFA8C9), top: KafaTop.fluffy, topColor: Color(0xFFFFFFFF), eyes: KafaEyes.sleepy, mouth: KafaMouth.smile),
-  Kafa(id: 4, name: 'Şimşek', price: 45, face: Color(0xFF6EC1FF), top: KafaTop.headband, topColor: Color(0xFFFFE03A), eyes: KafaEyes.glasses, mouth: KafaMouth.open),
-  Kafa(id: 5, name: 'Fındık', price: 70, face: Color(0xFFD9A066), top: KafaTop.beanie, topColor: Color(0xFF2FA968), eyes: KafaEyes.round, mouth: KafaMouth.open),
-  Kafa(id: 6, name: 'Bıcır', price: 100, face: Color(0xFFC7A6FF), top: KafaTop.bow, topColor: Color(0xFFFF4F7B), eyes: KafaEyes.round, mouth: KafaMouth.smile),
-  Kafa(id: 7, name: 'Tosun', price: 140, face: Color(0xFFFF9F5A), top: KafaTop.horns, topColor: Color(0xFF8C98A8), eyes: KafaEyes.happy, mouth: KafaMouth.open, blush: false),
-  Kafa(id: 8, name: 'Uykucu', price: 190, face: Color(0xFF5ED6CF), top: KafaTop.nightcap, topColor: Color(0xFF4A5BD9), eyes: KafaEyes.sleepy, mouth: KafaMouth.o),
-  Kafa(id: 9, name: 'Kaptan', price: 250, face: Color(0xFFA5E86B), top: KafaTop.captain, topColor: Color(0xFF1F2A5C), eyes: KafaEyes.star, mouth: KafaMouth.smile),
-  Kafa(id: 10, name: 'Kral Kafa', price: 320, face: Color(0xFFFFC23D), top: KafaTop.crown, topColor: Color(0xFFFFB300), eyes: KafaEyes.glasses, mouth: KafaMouth.smile),
+  Kafa(id: 1, name: 'Karakter 1', price: 0, face: Color(0xFFFFD34E), top: KafaTop.spiky, topColor: Color(0xFFFF7A2F), eyes: KafaEyes.round, mouth: KafaMouth.smile),
+  Kafa(id: 2, name: 'Karakter 2', price: 10, face: Color(0xFF7BE3B6), top: KafaTop.cap, topColor: Color(0xFFE8413C), eyes: KafaEyes.happy, mouth: KafaMouth.tongue),
+  Kafa(id: 3, name: 'Karakter 3', price: 25, face: Color(0xFFFFA8C9), top: KafaTop.fluffy, topColor: Color(0xFFFFFFFF), eyes: KafaEyes.sleepy, mouth: KafaMouth.smile),
+  Kafa(id: 4, name: 'Karakter 4', price: 45, face: Color(0xFF6EC1FF), top: KafaTop.headband, topColor: Color(0xFFFFE03A), eyes: KafaEyes.glasses, mouth: KafaMouth.open),
+  Kafa(id: 5, name: 'Karakter 5', price: 70, face: Color(0xFFD9A066), top: KafaTop.beanie, topColor: Color(0xFF2FA968), eyes: KafaEyes.round, mouth: KafaMouth.open),
+  Kafa(id: 6, name: 'Karakter 6', price: 100, face: Color(0xFFC7A6FF), top: KafaTop.bow, topColor: Color(0xFFFF4F7B), eyes: KafaEyes.round, mouth: KafaMouth.smile),
+  Kafa(id: 7, name: 'Karakter 7', price: 140, face: Color(0xFFFF9F5A), top: KafaTop.horns, topColor: Color(0xFF8C98A8), eyes: KafaEyes.happy, mouth: KafaMouth.open, blush: false),
+  Kafa(id: 8, name: 'Karakter 8', price: 190, face: Color(0xFF5ED6CF), top: KafaTop.nightcap, topColor: Color(0xFF4A5BD9), eyes: KafaEyes.sleepy, mouth: KafaMouth.o),
+  Kafa(id: 9, name: 'Karakter 9', price: 250, face: Color(0xFFA5E86B), top: KafaTop.captain, topColor: Color(0xFF1F2A5C), eyes: KafaEyes.star, mouth: KafaMouth.smile),
+  Kafa(id: 10, name: 'Karakter 10', price: 320, face: Color(0xFFFFC23D), top: KafaTop.crown, topColor: Color(0xFFFFB300), eyes: KafaEyes.glasses, mouth: KafaMouth.smile),
 ];
 
 Kafa kafaById(int id) =>
@@ -390,7 +396,7 @@ ui.Image renderKafaImage(Kafa k, int pixelSize) {
   return recorder.endRecording().toImageSync(pixelSize, pixelSize);
 }
 
-/// Flutter arayüzünde kafa gösteren widget. [locked] ise gri ve soluk.
+/// Flutter arayüzünde karakter görselini gösteren widget. [locked] ise gri ve soluk.
 class KafaView extends StatelessWidget {
   const KafaView(this.kafa, {super.key, this.size = 96, this.locked = false});
 
@@ -400,7 +406,7 @@ class KafaView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final view = CustomPaint(size: Size.square(size), painter: _KafaPainter(kafa));
+    final view = Image.asset(kafa.imageAsset, width: size, height: size, fit: BoxFit.contain);
     if (!locked) return view;
     return ColorFiltered(
       colorFilter: const ColorFilter.matrix(<double>[
@@ -412,15 +418,4 @@ class KafaView extends StatelessWidget {
       child: view,
     );
   }
-}
-
-class _KafaPainter extends CustomPainter {
-  _KafaPainter(this.kafa);
-  final Kafa kafa;
-
-  @override
-  void paint(Canvas canvas, Size size) => paintKafa(canvas, Offset.zero & size, kafa);
-
-  @override
-  bool shouldRepaint(_KafaPainter old) => old.kafa != kafa;
 }
