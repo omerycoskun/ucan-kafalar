@@ -1,185 +1,168 @@
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Zorluk modları. [unlockInterval] her kaç puanda bir sonraki karakterin
-/// açıldığını belirler (kolay = daha çok puan gerektirir).
-enum Difficulty {
-  // label, unlockInterval, pipeGap (geniş=kolay), pipeSpeed (yavaş=kolay)
-  easy('Kolay', 30, 260, -180),
-  medium('Orta', 18, 230, -240),
-  hard('Zor', 10, 195, -255),
-  // Macera: skor arttıkça borular giderek hızlanır (başlangıç değerleri).
-  adventure('Macera', 15, 200, -115);
+import 'kafa.dart';
 
-  const Difficulty(this.label, this.unlockInterval, this.pipeGap, this.pipeSpeed);
+/// Oyun modları: yatay uçuş ve dikey zıplama.
+enum GameMode {
+  fly('Uç'),
+  jump('Zıpla');
+
+  const GameMode(this.label);
+  final String label;
+}
+
+/// Uç modunun zorlukları (Zıpla modu skorla kendiliğinden zorlaşır).
+enum Difficulty {
+  // label, gap (geniş=kolay), speed (yavaş=kolay)
+  easy('Kolay', 260, -180),
+  medium('Orta', 230, -240),
+  hard('Zor', 195, -255),
+  // Macera: skor arttıkça kuleler giderek hızlanır (başlangıç değerleri).
+  adventure('Macera', 200, -115);
+
+  const Difficulty(this.label, this.gap, this.speed);
 
   /// Ekranlarda gösterilen Türkçe ad.
   final String label;
 
-  /// Bir sonraki karakteri açmak için gereken puan aralığı.
-  final int unlockInterval;
+  /// Kuleler arası dikey boşluk (piksel). Zor modda daha dar.
+  final double gap;
 
-  /// Borular arası dikey boşluk (piksel). Zor modda daha dar.
-  final double pipeGap;
-
-  /// Boru başlangıç yatay hızı (negatif = sola). Macera'da skorla artar.
-  final double pipeSpeed;
+  /// Kule başlangıç yatay hızı (negatif = sola). Macera'da skorla artar.
+  final double speed;
 
   /// Skorla hızlanan macera modu mu?
   bool get isAdventure => this == Difficulty.adventure;
 
-  /// Ayarlar/karakter ekranında gösterilen açıklama.
-  String get subtitle => isAdventure
-      ? 'Skorla hızlanır • her $unlockInterval puanda karakter'
-      : 'Her $unlockInterval puanda karakter açılır';
+  String get subtitle => isAdventure ? 'Skorla giderek hızlanır' : 'Sabit hız';
 }
 
-/// Toplam karakter sayısı (character_1..character_10 + background_music_1..10).
-const int kCharacterCount = 10;
+/// Bir oyun bitince kaydedilen sonuç (UI'da gösterilir).
+class RunOutcome {
+  const RunOutcome({
+    required this.score,
+    required this.bestScore,
+    required this.starsGained,
+    required this.totalStars,
+    required this.unlocked,
+  });
+
+  final int score;
+  final int bestScore;
+  final int starsGained;
+  final int totalStars;
+
+  /// Bu oyunla YENİ açılan kafalar.
+  final List<Kafa> unlocked;
+}
+
+/// [totalStars] toplam yıldızla açık olan kafaların sayısı (saf, test edilebilir).
+int unlockedCountFor(int totalStars) => kKafalar.where((k) => totalStars >= k.price).length;
 
 /// Tüm kalıcı durum ve ayarların tek merkezden yönetimi.
-/// Değişiklikleri dinleyen ekranlar için [ChangeNotifier].
 class GameStore extends ChangeNotifier {
   GameStore._();
 
   static final GameStore instance = GameStore._();
 
-  static const _kBestScore = 'best_score';
-  static const _kUnlockedCount = 'unlocked_count';
-  static const _kSelectedChar = 'selected_character';
+  static const _kBestFly = 'best_fly';
+  static const _kBestJump = 'best_jump';
+  static const _kStars = 'total_stars';
+  static const _kSelectedKafa = 'selected_kafa';
   static const _kSoundOn = 'sound_on';
   static const _kMusicOn = 'music_on';
   static const _kDifficulty = 'difficulty';
 
-  late SharedPreferences _prefs;
-  bool _loaded = false;
-  bool get loaded => _loaded;
+  SharedPreferences? _prefs;
 
-  int _bestScore = 0;
-  int _unlockedCount = 1; // sadece ilk karakter açık başlar
-  int _selectedCharacter = 1; // 1-tabanlı
+  int _bestFly = 0;
+  int _bestJump = 0;
+  int _stars = 0;
+  int _selectedKafa = 1;
   bool _soundOn = true;
   bool _musicOn = true;
-  Difficulty _difficulty = Difficulty.hard;
+  Difficulty _difficulty = Difficulty.medium;
 
-  int get bestScore => _bestScore;
-  int get unlockedCount => _unlockedCount;
-  int get selectedCharacter => _selectedCharacter;
+  int bestScore(GameMode mode) => mode == GameMode.fly ? _bestFly : _bestJump;
+  int get totalStars => _stars;
+  Kafa get selectedKafa => kafaById(_selectedKafa);
   bool get soundOn => _soundOn;
   bool get musicOn => _musicOn;
   Difficulty get difficulty => _difficulty;
 
   Future<void> load() async {
-    _prefs = await SharedPreferences.getInstance();
-    _bestScore = _prefs.getInt(_kBestScore) ?? 0;
-    _unlockedCount = _prefs.getInt(_kUnlockedCount) ?? 1;
-    _selectedCharacter = _prefs.getInt(_kSelectedChar) ?? 1;
-    _soundOn = _prefs.getBool(_kSoundOn) ?? true;
-    _musicOn = _prefs.getBool(_kMusicOn) ?? true;
-    final diffIndex = _prefs.getInt(_kDifficulty) ?? Difficulty.hard.index;
-    _difficulty = Difficulty.values[diffIndex.clamp(0, Difficulty.values.length - 1)];
-    _loaded = true;
+    final p = _prefs = await SharedPreferences.getInstance();
+    _bestFly = p.getInt(_kBestFly) ?? 0;
+    _bestJump = p.getInt(_kBestJump) ?? 0;
+    _stars = p.getInt(_kStars) ?? 0;
+    _selectedKafa = p.getInt(_kSelectedKafa) ?? 1;
+    _soundOn = p.getBool(_kSoundOn) ?? true;
+    _musicOn = p.getBool(_kMusicOn) ?? true;
+    final d = p.getInt(_kDifficulty) ?? Difficulty.medium.index;
+    _difficulty = Difficulty.values[d.clamp(0, Difficulty.values.length - 1)];
+    if (!isUnlocked(selectedKafa)) _selectedKafa = 1;
     notifyListeners();
   }
 
-  bool isUnlocked(int character1Based) => character1Based <= _unlockedCount;
+  bool isUnlocked(Kafa k) => _stars >= k.price;
 
-  /// Belirli bir karakteri açmak için gereken toplam puan eşiği.
-  /// Karakter 1 => 0, karakter 2 => interval, karakter 3 => 2*interval ...
-  int unlockThreshold(int character1Based) =>
-      (character1Based - 1) * _difficulty.unlockInterval;
-
-  /// Bir oyun bittiğinde çağrılır. En yüksek skoru ve buna bağlı açılan
-  /// karakter sayısını günceller. Yeni bir karakter açıldıysa true döner.
-  Future<bool> registerRunResult(int score) async {
-    var changed = false;
-    var newlyUnlocked = false;
-
-    if (score > _bestScore) {
-      _bestScore = score;
-      await _prefs.setInt(_kBestScore, _bestScore);
-      changed = true;
+  /// Oyun bitince çağrılır: rekoru ve yıldızları kaydeder, yeni açılanları döner.
+  Future<RunOutcome> registerRun(GameMode mode, {required int score, required int stars}) async {
+    final before = unlockedCountFor(_stars);
+    _stars += stars;
+    if (mode == GameMode.fly && score > _bestFly) _bestFly = score;
+    if (mode == GameMode.jump && score > _bestJump) _bestJump = score;
+    final p = _prefs;
+    if (p != null) {
+      await p.setInt(_kStars, _stars);
+      await p.setInt(_kBestFly, _bestFly);
+      await p.setInt(_kBestJump, _bestJump);
     }
-
-    // Bu skorla kaç karakter açılmış olmalı? (kalıcı, geri kilitlenmez)
-    final earned = (1 + (score ~/ _difficulty.unlockInterval))
-        .clamp(1, kCharacterCount);
-    if (earned > _unlockedCount) {
-      _unlockedCount = earned;
-      await _prefs.setInt(_kUnlockedCount, _unlockedCount);
-      changed = true;
-      newlyUnlocked = true;
-    }
-
-    if (changed) notifyListeners();
-    return newlyUnlocked;
+    final after = unlockedCountFor(_stars);
+    notifyListeners();
+    return RunOutcome(
+      score: score,
+      bestScore: bestScore(mode),
+      starsGained: stars,
+      totalStars: _stars,
+      unlocked: kKafalar.where((k) => k.price <= _stars).skip(before).take(after - before).toList(),
+    );
   }
 
-  Future<void> selectCharacter(int character1Based) async {
-    if (!isUnlocked(character1Based)) return;
-    _selectedCharacter = character1Based;
-    await _prefs.setInt(_kSelectedChar, character1Based);
+  Future<void> selectKafa(Kafa k) async {
+    if (!isUnlocked(k)) return;
+    _selectedKafa = k.id;
+    await _prefs?.setInt(_kSelectedKafa, k.id);
     notifyListeners();
   }
 
   Future<void> setSoundOn(bool value) async {
     _soundOn = value;
-    await _prefs.setBool(_kSoundOn, value);
+    await _prefs?.setBool(_kSoundOn, value);
     notifyListeners();
   }
 
   Future<void> setMusicOn(bool value) async {
     _musicOn = value;
-    await _prefs.setBool(_kMusicOn, value);
+    await _prefs?.setBool(_kMusicOn, value);
     notifyListeners();
   }
 
   Future<void> setDifficulty(Difficulty value) async {
     _difficulty = value;
-    await _prefs.setInt(_kDifficulty, value.index);
+    await _prefs?.setInt(_kDifficulty, value.index);
     notifyListeners();
   }
 
-  /// Yalnızca testler için: kalıcı depolamaya dokunmadan zorluğu ayarlar.
-  @visibleForTesting
-  void setDifficultyForTest(Difficulty value) => _difficulty = value;
-
-  /// Ayarları ve ilerlemeyi varsayılana döndürür (ayarlar menüsündeki sıfırla).
+  /// Ayarları varsayılana döndürür (ilerleme — yıldız/rekor — korunur).
   Future<void> resetToDefaults() async {
-    _soundOn = true;
-    _musicOn = true;
-    _difficulty = Difficulty.hard;
-    _selectedCharacter = 1;
-    await _prefs.setBool(_kSoundOn, true);
-    await _prefs.setBool(_kMusicOn, true);
-    await _prefs.setInt(_kDifficulty, Difficulty.hard.index);
-    await _prefs.setInt(_kSelectedChar, 1);
-    notifyListeners();
+    await setSoundOn(true);
+    await setMusicOn(true);
+    await setDifficulty(Difficulty.medium);
   }
+
+  /// Yalnızca testler için: kalıcı depolama olmadan yıldız sayısını ayarlar.
+  @visibleForTesting
+  void setStarsForTest(int stars) => _stars = stars;
 }
-
-/// Karakter -> görsel / müzik eşlemesi. Dosya sonundaki sayı baz alınır:
-/// character_N.png <-> background_music_N.mp3.
-class CharacterInfo {
-  const CharacterInfo(this.id);
-
-  /// 1-tabanlı karakter numarası.
-  final int id;
-
-  String get spritePath => 'characters/character_$id.png';
-  String get musicPath => 'background_music_$id.mp3';
-  String get displayName => 'Karakter $id';
-}
-
-const List<CharacterInfo> kCharacters = [
-  CharacterInfo(1),
-  CharacterInfo(2),
-  CharacterInfo(3),
-  CharacterInfo(4),
-  CharacterInfo(5),
-  CharacterInfo(6),
-  CharacterInfo(7),
-  CharacterInfo(8),
-  CharacterInfo(9),
-  CharacterInfo(10),
-];

@@ -13,7 +13,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await GameStore.instance.load();
-  runApp(const FlappyApp());
+  runApp(const UcanKafalarApp());
   // iOS ATT izin penceresi uygulama AKTİF olduğunda açılabilir; bu yüzden
   // reklam başlatma (önce ATT izni ister) ilk kare çizildikten sonra yapılır.
   WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -21,7 +21,7 @@ void main() async {
   });
 }
 
-/// Sadece debug modunda: `?screen=character|settings|game` ile doğrudan ilgili
+/// Sadece debug modunda: `?screen=character|settings|fly|jump` ile doğrudan ilgili
 /// ekranı açar (görsel test/hızlı geliştirme için). Release'de her zaman menü.
 Widget _initialScreen() {
   if (kDebugMode) {
@@ -30,15 +30,17 @@ Widget _initialScreen() {
         return const CharacterScreen();
       case 'settings':
         return const SettingsScreen();
-      case 'game':
-        return const GameScreen();
+      case 'fly':
+        return const GameScreen(mode: GameMode.fly);
+      case 'jump':
+        return const GameScreen(mode: GameMode.jump);
     }
   }
   return const MenuScreen();
 }
 
-class FlappyApp extends StatelessWidget {
-  const FlappyApp({super.key});
+class UcanKafalarApp extends StatelessWidget {
+  const UcanKafalarApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +48,7 @@ class FlappyApp extends StatelessWidget {
       title: 'Uçan Kafalar',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF73C736)),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6B5BD6)),
         useMaterial3: true,
       ),
       home: _initialScreen(),

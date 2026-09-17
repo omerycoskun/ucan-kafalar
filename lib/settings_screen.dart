@@ -11,7 +11,6 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final store = GameStore.instance;
     return MenuScaffold(
-      showBackground: false,
       child: ListenableBuilder(
         listenable: store,
         builder: (context, _) {
@@ -21,7 +20,7 @@ class SettingsScreen extends StatelessWidget {
               Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.white, size: 30),
+                    icon: const Icon(Icons.arrow_back_rounded, color: Colors.white, size: 32),
                     onPressed: () => goBackOrMenu(context),
                   ),
                   const Expanded(child: GameTitle('Ayarlar', fontSize: 30)),
@@ -38,7 +37,7 @@ class SettingsScreen extends StatelessWidget {
                         title: const _Label('Ses Efektleri'),
                         secondary: const Icon(Icons.volume_up, color: Colors.white),
                         value: store.soundOn,
-                        activeThumbColor: AppColors.grass,
+                        activeThumbColor: AppColors.teal,
                         onChanged: store.setSoundOn,
                       ),
                     ),
@@ -47,14 +46,14 @@ class SettingsScreen extends StatelessWidget {
                         title: const _Label('Müzik'),
                         secondary: const Icon(Icons.music_note, color: Colors.white),
                         value: store.musicOn,
-                        activeThumbColor: AppColors.grass,
+                        activeThumbColor: AppColors.teal,
                         onChanged: store.setMusicOn,
                       ),
                     ),
                     const SizedBox(height: 8),
                     const Padding(
                       padding: EdgeInsets.only(left: 8, bottom: 6),
-                      child: _Label('Zorluk', bold: true),
+                      child: _Label('Uç Modu Zorluğu', bold: true),
                     ),
                     RadioGroup<Difficulty>(
                       groupValue: store.difficulty,
@@ -73,7 +72,7 @@ class SettingsScreen extends StatelessWidget {
                                         color: Colors.white70, fontSize: 12),
                                   ),
                                   value: d,
-                                  activeColor: AppColors.orange,
+                                  activeColor: AppColors.gold,
                                 ),
                               ),
                             )
@@ -85,7 +84,7 @@ class SettingsScreen extends StatelessWidget {
                       child: MenuButton(
                         label: 'Varsayılana Sıfırla',
                         icon: Icons.restore,
-                        color: AppColors.orange,
+                        color: AppColors.violet,
                         onPressed: () async {
                           await store.resetToDefaults();
                           if (context.mounted) {
@@ -114,7 +113,7 @@ class SettingsScreen extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.35),
+        color: AppColors.ink.withValues(alpha: 0.7),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: Colors.white24),
       ),

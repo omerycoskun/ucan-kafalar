@@ -1,29 +1,35 @@
 import 'package:flappybird/game_store.dart';
+import 'package:flappybird/kafa.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('unlock threshold scales with difficulty interval', () {
-    final store = GameStore.instance;
-
-    // Eşik = (karakter-1) * zorluğun unlockInterval'ı (değerden bağımsız test).
-    store.setDifficultyForTest(Difficulty.hard);
-    expect(store.unlockThreshold(1), 0);
-    expect(store.unlockThreshold(2), Difficulty.hard.unlockInterval);
-    expect(store.unlockThreshold(3), 2 * Difficulty.hard.unlockInterval);
-
-    store.setDifficultyForTest(Difficulty.easy);
-    expect(store.unlockThreshold(2), Difficulty.easy.unlockInterval);
-
-    store.setDifficultyForTest(Difficulty.adventure);
-    expect(store.unlockThreshold(2), Difficulty.adventure.unlockInterval);
-    expect(store.unlockThreshold(3), 2 * Difficulty.adventure.unlockInterval);
-    expect(Difficulty.adventure.isAdventure, isTrue);
-    expect(Difficulty.hard.isAdventure, isFalse);
+  test('kafalar yıldız fiyatına göre sıralı ve ilk kafa ücretsiz', () {
+    expect(kKafalar.first.price, 0);
+    for (var i = 1; i < kKafalar.length; i++) {
+      expect(kKafalar[i].price, greaterThan(kKafalar[i - 1].price));
+    }
+    expect(kKafalar.map((k) => k.id).toSet().length, kKafalar.length);
   });
 
-  test('character maps to matching music by trailing number', () {
-    const info = CharacterInfo(7);
-    expect(info.spritePath, 'characters/character_7.png');
-    expect(info.musicPath, 'background_music_7.mp3');
+  test('toplam yıldızla açılan kafa sayısı', () {
+    expect(unlockedCountFor(0), 1);
+    expect(unlockedCountFor(kKafalar[1].price - 1), 1);
+    expect(unlockedCountFor(kKafalar[1].price), 2);
+    expect(unlockedCountFor(100000), kKafalar.length);
+  });
+
+  test('registerRun yıldızları biriktirir ve yeni açılanları döner', () async {
+    final store = GameStore.instance;
+    store.setStarsForTest(kKafalar[1].price - 2);
+    final outcome = await store.registerRun(GameMode.jump, score: 42, stars: 5);
+    expect(outcome.totalStars, kKafalar[1].price + 3);
+    expect(outcome.unlocked.map((k) => k.id), [kKafalar[1].id]);
+    expect(outcome.bestScore, 42);
+    expect(store.bestScore(GameMode.fly), 0);
+  });
+
+  test('kafa müziği numarasıyla eşleşir', () {
+    expect(kafaById(7).musicPath, 'background_music_7.mp3');
+    expect(kafaById(999).id, kKafalar.first.id);
   });
 }

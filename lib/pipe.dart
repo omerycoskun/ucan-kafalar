@@ -4,119 +4,112 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
+import 'arcade.dart';
 import 'flappy_game.dart';
 
-class PipePair extends PositionComponent with HasGameReference<FlappyGame> {
-  static const double pipeWidth = 70;
+/// Üstte ve altta birer renkli tuğla kule; arada geçilecek boşluk ve
+/// (bazen) toplanacak bir yıldız.
+class TowerPair extends PositionComponent with HasGameReference<FlyGame> {
+  static const double towerWidth = 74;
+
+  /// Kule renk paletleri: (gövde, tepe/ağız, derz).
+  static const List<List<Color>> palettes = [
+    [Color(0xFFFF7B6B), Color(0xFFFFB4A8), Color(0xFFC94F43)], // mercan
+    [Color(0xFF9B7BFF), Color(0xFFC9B6FF), Color(0xFF6A4FD1)], // mor
+    [Color(0xFF3CC8C0), Color(0xFF9BEBE6), Color(0xFF238F89)], // turkuaz
+    [Color(0xFFFFB443), Color(0xFFFFDA9B), Color(0xFFCF8414)], // amber
+  ];
 
   final double gapY;
+  final int palette;
+  final bool withStar;
   bool scored = false;
 
-  PipePair({required double x, required this.gapY})
-      : super(
-          position: Vector2(x, 0),
-          size: Vector2(pipeWidth, FlappyGame.virtualSize.y),
-        );
+  TowerPair({required double x, required this.gapY, required this.palette, required this.withStar})
+      : super(position: Vector2(x, 0), size: Vector2(towerWidth, ArcadeGame.virtualSize.y));
 
   @override
   FutureOr<void> onLoad() {
-    final gap = game.difficulty.pipeGap;
+    final gap = game.difficulty.gap;
     final topHeight = gapY - gap / 2;
     final bottomTop = gapY + gap / 2;
-    // Alt boru ekranın en altına kadar iner; zeminle arasında boşluk kalmaz.
-    final bottomHeight = FlappyGame.virtualSize.y - bottomTop;
-
+    final colors = palettes[palette];
     addAll([
-      _PipeSegment(
-        size: Vector2(pipeWidth, topHeight),
-        position: Vector2.zero(),
-        capAtBottom: true,
-      ),
-      _PipeSegment(
-        size: Vector2(pipeWidth, bottomHeight),
+      _Tower(size: Vector2(towerWidth, topHeight), position: Vector2.zero(), capAtBottom: true, colors: colors),
+      _Tower(
+        size: Vector2(towerWidth, ArcadeGame.virtualSize.y - bottomTop),
         position: Vector2(0, bottomTop),
         capAtBottom: false,
+        colors: colors,
       ),
     ]);
+    if (withStar) add(StarPickup(position: Vector2(towerWidth / 2, gapY)));
   }
 
   @override
   void update(double dt) {
     super.update(dt);
     if (game.state != GameState.playing) return;
-
-    position.x += game.currentPipeSpeed * dt;
-
-    if (!scored && position.x + pipeWidth < game.bird.position.x) {
+    position.x += game.currentSpeed * dt;
+    if (!scored && position.x + towerWidth < game.flyer.position.x) {
       scored = true;
-      game.addScore();
+      game.addPoint();
     }
-
-    if (position.x < -pipeWidth) {
-      removeFromParent();
-    }
+    if (position.x < -towerWidth - 10) removeFromParent();
   }
 }
 
-/// Tek bir boru parçası; kod ile çizilir (gövde gradyanı + ağız/cap + kenarlık).
-/// [capAtBottom] true ise ağız aşağıda (üstten sarkan boru), false ise yukarıda.
-class _PipeSegment extends PositionComponent with CollisionCallbacks {
-  final bool capAtBottom;
-
-  static const double _capHeight = 26;
-  static const double _capOverhang = 5;
-
-  _PipeSegment({
-    required Vector2 size,
-    required Vector2 position,
-    required this.capAtBottom,
-  }) : super(size: size, position: position, anchor: Anchor.topLeft) {
+/// Tek kule: tuğla desenli gövde + boşluğa bakan uçta yuvarlak tepe.
+class _Tower extends PositionComponent {
+  _Tower({required Vector2 size, required Vector2 position, required this.capAtBottom, required this.colors})
+      : super(size: size, position: position) {
     add(RectangleHitbox());
   }
+
+  final bool capAtBottom;
+  final List<Color> colors;
+
+  static const double _capHeight = 22;
+  static const double _brickH = 14;
+  static const double _brickW = 26;
 
   @override
   void render(Canvas canvas) {
     if (size.y <= 0) return;
+    final body = Rect.fromLTWH(0, 0, size.x, size.y);
+    canvas.drawRect(body, Paint()..color = colors[0]);
 
-    // Gövde: soldan sağa açık->koyu->açik yeşil gradyan (silindir hissi).
-    final bodyRect = Rect.fromLTWH(0, 0, size.x, size.y);
-    final bodyPaint = Paint()
-      ..shader = const LinearGradient(
-        colors: [
-          Color(0xFF5B8A1E),
-          Color(0xFF8FD44A),
-          Color(0xFF74BF2E),
-          Color(0xFF4E7A1A),
-        ],
-        stops: [0.0, 0.35, 0.7, 1.0],
-      ).createShader(bodyRect);
-    canvas.drawRect(bodyRect, bodyPaint);
+    // Tuğla derzleri (sıra sıra kaydırılmış).
+    final mortar = Paint()
+      ..color = colors[2].withValues(alpha: 0.55)
+      ..strokeWidth = 2;
+    var row = 0;
+    for (double y = capAtBottom ? size.y % _brickH : 0; y < size.y; y += _brickH, row++) {
+      canvas.drawLine(Offset(0, y), Offset(size.x, y), mortar);
+      final shift = row.isEven ? 0.0 : _brickW / 2;
+      for (double x = shift; x < size.x; x += _brickW) {
+        canvas.drawLine(Offset(x, y), Offset(x, (y + _brickH).clamp(0, size.y)), mortar);
+      }
+    }
+    // Soldan ışık, sağdan gölge.
+    canvas.drawRect(Rect.fromLTWH(0, 0, 8, size.y), Paint()..color = Colors.white.withValues(alpha: 0.22));
+    canvas.drawRect(Rect.fromLTWH(size.x - 10, 0, 10, size.y), Paint()..color = Colors.black.withValues(alpha: 0.14));
 
-    // Gövde kenarlığı.
-    final edgePaint = Paint()
+    final edge = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2
-      ..color = const Color(0xFF3C5E12);
-    canvas.drawRect(bodyRect, edgePaint);
+      ..strokeWidth = 3
+      ..color = const Color(0xFF2B2140);
+    canvas.drawRect(body, edge);
 
-    // Ağız (cap): boşluğa bakan uçta, gövdeden biraz taşkın.
+    // Tepe: boşluğa bakan uçta taşkın, yuvarlatılmış blok.
     final capTop = capAtBottom ? size.y - _capHeight : 0.0;
-    final capRect = Rect.fromLTWH(
-      -_capOverhang,
-      capTop,
-      size.x + _capOverhang * 2,
-      _capHeight,
-    );
-    final capPaint = Paint()
-      ..shader = LinearGradient(
-        colors: const [
-          Color(0xFF4E7A1A),
-          Color(0xFF9BDE52),
-          Color(0xFF6FB528),
-        ],
-        stops: const [0.0, 0.4, 1.0],
-      ).createShader(capRect);
-    canvas.drawRect(capRect, capPaint);
-    canvas.drawRect(capRect, edgePaint);
+    final cap = RRect.fromRectAndRadius(Rect.fromLTWH(-6, capTop, size.x + 12, _capHeight), const Radius.circular(8));
+    canvas.drawRRect(cap, Paint()..color = colors[1]);
+    canvas.drawRRect(cap, edge);
+    // Tepedeki küçük pencere ışıkları.
+    final light = Paint()..color = Colors.white.withValues(alpha: 0.8);
+    for (var i = 0; i < 3; i++) {
+      canvas.drawCircle(Offset(size.x * (0.25 + i * 0.25), capTop + _capHeight / 2), 3, light);
+    }
   }
 }

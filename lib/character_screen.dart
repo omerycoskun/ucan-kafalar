@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'game_store.dart';
+import 'kafa.dart';
 import 'ui_common.dart';
 
-/// Karakter seçim ekranı. Kilitli karakterler görselleriyle birlikte
-/// karartılmış olarak, üzerinde kilit simgesi ve gereken puanla gösterilir.
+/// Kafa seçim ekranı. Kafalar iki moddan toplanan TOPLAM yıldızla açılır.
 class CharacterScreen extends StatelessWidget {
   const CharacterScreen({super.key});
 
@@ -12,53 +12,48 @@ class CharacterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final store = GameStore.instance;
     return MenuScaffold(
-      showBackground: false,
       child: ListenableBuilder(
         listenable: store,
         builder: (context, _) {
           return Column(
             children: [
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.white, size: 30),
+                    icon: const Icon(Icons.arrow_back_rounded, color: Colors.white, size: 32),
                     onPressed: () => goBackOrMenu(context),
                   ),
-                  const Expanded(child: GameTitle('Karakterler', fontSize: 30)),
-                  const SizedBox(width: 48),
+                  const Expanded(child: GameTitle('Kafalar', fontSize: 32)),
+                  Padding(padding: const EdgeInsets.only(right: 12), child: StarBadge(store.totalStars)),
                 ],
               ),
-              const SizedBox(height: 4),
-              Text(
-                'Her ${store.difficulty.unlockInterval} puanda yeni karakter açılır (${store.difficulty.label})',
-                style: const TextStyle(color: Colors.white, fontSize: 13),
-                textAlign: TextAlign.center,
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+                child: Text(
+                  'Uç ve Zıpla modlarında yıldız topla, yeni kafaları aç!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: AppColors.ink, fontSize: 14, fontWeight: FontWeight.w700),
+                ),
               ),
-              const SizedBox(height: 8),
               Expanded(
                 child: GridView.builder(
-                  padding: const EdgeInsets.all(12),
-                  gridDelegate:
-                      const SliverGridDelegateWithFixedCrossAxisCount(
+                  padding: const EdgeInsets.all(14),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
-                    childAspectRatio: 0.82,
+                    childAspectRatio: 0.78,
                   ),
-                  itemCount: kCharacters.length,
+                  itemCount: kKafalar.length,
                   itemBuilder: (context, index) {
-                    final info = kCharacters[index];
-                    final unlocked = store.isUnlocked(info.id);
-                    final selected = store.selectedCharacter == info.id;
-                    return _CharacterTile(
-                      info: info,
+                    final k = kKafalar[index];
+                    final unlocked = store.isUnlocked(k);
+                    return _KafaTile(
+                      kafa: k,
                       unlocked: unlocked,
-                      selected: selected,
-                      threshold: store.unlockThreshold(info.id),
-                      onTap: unlocked
-                          ? () => store.selectCharacter(info.id)
-                          : null,
+                      selected: store.selectedKafa.id == k.id,
+                      onTap: unlocked ? () => store.selectKafa(k) : null,
                     );
                   },
                 ),
@@ -71,19 +66,12 @@ class CharacterScreen extends StatelessWidget {
   }
 }
 
-class _CharacterTile extends StatelessWidget {
-  const _CharacterTile({
-    required this.info,
-    required this.unlocked,
-    required this.selected,
-    required this.threshold,
-    required this.onTap,
-  });
+class _KafaTile extends StatelessWidget {
+  const _KafaTile({required this.kafa, required this.unlocked, required this.selected, required this.onTap});
 
-  final CharacterInfo info;
+  final Kafa kafa;
   final bool unlocked;
   final bool selected;
-  final int threshold;
   final VoidCallback? onTap;
 
   @override
@@ -92,60 +80,42 @@ class _CharacterTile extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.9),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: selected ? AppColors.orange : Colors.white,
-            width: selected ? 4 : 2,
-          ),
+          color: AppColors.panel,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: selected ? AppColors.coral : AppColors.ink, width: selected ? 4 : 2.5),
         ),
         child: Column(
           children: [
             Expanded(
               child: Stack(
-                fit: StackFit.expand,
+                alignment: Alignment.center,
                 children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                    child: ColorFiltered(
-                      colorFilter: unlocked
-                          ? const ColorFilter.mode(
-                              Colors.transparent, BlendMode.multiply)
-                          : const ColorFilter.mode(
-                              Colors.black54, BlendMode.saturation),
-                      child: Image.asset(
-                        'assets/images/characters/character_${info.id}.png',
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+                  LayoutBuilder(
+                    builder: (context, c) => KafaView(kafa, size: c.biggest.shortestSide * 0.95, locked: !unlocked),
                   ),
-                  if (!unlocked)
-                    Container(
-                      color: Colors.black.withValues(alpha: 0.4),
-                      child: const Center(
-                        child: Icon(Icons.lock, color: Colors.white, size: 34),
-                      ),
-                    ),
+                  if (!unlocked) const Icon(Icons.lock_rounded, color: AppColors.ink, size: 30),
                   if (selected)
                     const Positioned(
                       top: 4,
                       right: 4,
-                      child: Icon(Icons.check_circle,
-                          color: AppColors.orange, size: 24),
+                      child: Icon(Icons.check_circle_rounded, color: AppColors.coral, size: 24),
                     ),
                 ],
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              child: Text(
-                unlocked ? info.displayName : '$threshold puan',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: unlocked ? AppColors.dark : Colors.grey.shade700,
-                ),
-              ),
+              padding: const EdgeInsets.only(bottom: 6),
+              child: unlocked
+                  ? Text(kafa.name,
+                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w900, color: AppColors.ink))
+                  : Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.star_rounded, color: AppColors.gold, size: 16),
+                        Text('${kafa.price}',
+                            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w900, color: AppColors.ink)),
+                      ],
+                    ),
             ),
           ],
         ),

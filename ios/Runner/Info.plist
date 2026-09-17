@@ -259,8 +259,8 @@
 		<key>UIStatusBarHidden</key>
 		<false/>
 		<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
-	<key>UIRequiresFullScreen</key>
-	<true/>
-</dict>
+		<false/>
+		<key>UIRequiresFullScreen</key>
+		<true/>
+	</dict>
 </plist>
