@@ -4,7 +4,18 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 
 /// Kafanın üstündeki aksesuar / saç tipi.
-enum KafaTop { spiky, cap, fluffy, crown, beanie, bow, horns, nightcap, captain, headband }
+enum KafaTop {
+  spiky,
+  cap,
+  fluffy,
+  crown,
+  beanie,
+  bow,
+  horns,
+  nightcap,
+  captain,
+  headband,
+}
 
 /// Göz tipi.
 enum KafaEyes { round, happy, sleepy, glasses, star }
@@ -51,16 +62,107 @@ class Kafa {
 }
 
 const List<Kafa> kKafalar = [
-  Kafa(id: 1, name: 'Karakter 1', price: 0, face: Color(0xFFFFD34E), top: KafaTop.spiky, topColor: Color(0xFFFF7A2F), eyes: KafaEyes.round, mouth: KafaMouth.smile),
-  Kafa(id: 2, name: 'Karakter 2', price: 10, face: Color(0xFF7BE3B6), top: KafaTop.cap, topColor: Color(0xFFE8413C), eyes: KafaEyes.happy, mouth: KafaMouth.tongue),
-  Kafa(id: 3, name: 'Karakter 3', price: 25, face: Color(0xFFFFA8C9), top: KafaTop.fluffy, topColor: Color(0xFFFFFFFF), eyes: KafaEyes.sleepy, mouth: KafaMouth.smile),
-  Kafa(id: 4, name: 'Karakter 4', price: 45, face: Color(0xFF6EC1FF), top: KafaTop.headband, topColor: Color(0xFFFFE03A), eyes: KafaEyes.glasses, mouth: KafaMouth.open),
-  Kafa(id: 5, name: 'Karakter 5', price: 70, face: Color(0xFFD9A066), top: KafaTop.beanie, topColor: Color(0xFF2FA968), eyes: KafaEyes.round, mouth: KafaMouth.open),
-  Kafa(id: 6, name: 'Karakter 6', price: 100, face: Color(0xFFC7A6FF), top: KafaTop.bow, topColor: Color(0xFFFF4F7B), eyes: KafaEyes.round, mouth: KafaMouth.smile),
-  Kafa(id: 7, name: 'Karakter 7', price: 140, face: Color(0xFFFF9F5A), top: KafaTop.horns, topColor: Color(0xFF8C98A8), eyes: KafaEyes.happy, mouth: KafaMouth.open, blush: false),
-  Kafa(id: 8, name: 'Karakter 8', price: 190, face: Color(0xFF5ED6CF), top: KafaTop.nightcap, topColor: Color(0xFF4A5BD9), eyes: KafaEyes.sleepy, mouth: KafaMouth.o),
-  Kafa(id: 9, name: 'Karakter 9', price: 250, face: Color(0xFFA5E86B), top: KafaTop.captain, topColor: Color(0xFF1F2A5C), eyes: KafaEyes.star, mouth: KafaMouth.smile),
-  Kafa(id: 10, name: 'Karakter 10', price: 320, face: Color(0xFFFFC23D), top: KafaTop.crown, topColor: Color(0xFFFFB300), eyes: KafaEyes.glasses, mouth: KafaMouth.smile),
+  Kafa(
+    id: 1,
+    name: 'Karakter 1',
+    price: 0,
+    face: Color(0xFFFFD34E),
+    top: KafaTop.spiky,
+    topColor: Color(0xFFFF7A2F),
+    eyes: KafaEyes.round,
+    mouth: KafaMouth.smile,
+  ),
+  Kafa(
+    id: 2,
+    name: 'Karakter 2',
+    price: 40,
+    face: Color(0xFF7BE3B6),
+    top: KafaTop.cap,
+    topColor: Color(0xFFE8413C),
+    eyes: KafaEyes.happy,
+    mouth: KafaMouth.tongue,
+  ),
+  Kafa(
+    id: 3,
+    name: 'Karakter 3',
+    price: 90,
+    face: Color(0xFFFFA8C9),
+    top: KafaTop.fluffy,
+    topColor: Color(0xFFFFFFFF),
+    eyes: KafaEyes.sleepy,
+    mouth: KafaMouth.smile,
+  ),
+  Kafa(
+    id: 4,
+    name: 'Karakter 4',
+    price: 160,
+    face: Color(0xFF6EC1FF),
+    top: KafaTop.headband,
+    topColor: Color(0xFFFFE03A),
+    eyes: KafaEyes.glasses,
+    mouth: KafaMouth.open,
+  ),
+  Kafa(
+    id: 5,
+    name: 'Karakter 5',
+    price: 250,
+    face: Color(0xFFD9A066),
+    top: KafaTop.beanie,
+    topColor: Color(0xFF2FA968),
+    eyes: KafaEyes.round,
+    mouth: KafaMouth.open,
+  ),
+  Kafa(
+    id: 6,
+    name: 'Karakter 6',
+    price: 370,
+    face: Color(0xFFC7A6FF),
+    top: KafaTop.bow,
+    topColor: Color(0xFFFF4F7B),
+    eyes: KafaEyes.round,
+    mouth: KafaMouth.smile,
+  ),
+  Kafa(
+    id: 7,
+    name: 'Karakter 7',
+    price: 520,
+    face: Color(0xFFFF9F5A),
+    top: KafaTop.horns,
+    topColor: Color(0xFF8C98A8),
+    eyes: KafaEyes.happy,
+    mouth: KafaMouth.open,
+    blush: false,
+  ),
+  Kafa(
+    id: 8,
+    name: 'Karakter 8',
+    price: 700,
+    face: Color(0xFF5ED6CF),
+    top: KafaTop.nightcap,
+    topColor: Color(0xFF4A5BD9),
+    eyes: KafaEyes.sleepy,
+    mouth: KafaMouth.o,
+  ),
+  Kafa(
+    id: 9,
+    name: 'Karakter 9',
+    price: 920,
+    face: Color(0xFFA5E86B),
+    top: KafaTop.captain,
+    topColor: Color(0xFF1F2A5C),
+    eyes: KafaEyes.star,
+    mouth: KafaMouth.smile,
+  ),
+  Kafa(
+    id: 10,
+    name: 'Karakter 10',
+    price: 1200,
+    face: Color(0xFFFFC23D),
+    top: KafaTop.crown,
+    topColor: Color(0xFFFFB300),
+    eyes: KafaEyes.glasses,
+    mouth: KafaMouth.smile,
+  ),
 ];
 
 Kafa kafaById(int id) =>
@@ -96,7 +198,11 @@ void paintKafa(Canvas canvas, Rect box, Kafa k) {
       ..shader = RadialGradient(
         center: const Alignment(-0.35, -0.45),
         radius: 1.0,
-        colors: [Color.lerp(k.face, Colors.white, 0.35)!, k.face, Color.lerp(k.face, _ink, 0.18)!],
+        colors: [
+          Color.lerp(k.face, Colors.white, 0.35)!,
+          k.face,
+          Color.lerp(k.face, _ink, 0.18)!,
+        ],
         stops: const [0.0, 0.55, 1.0],
       ).createShader(headRect),
   );
@@ -106,7 +212,11 @@ void paintKafa(Canvas canvas, Rect box, Kafa k) {
     final blush = Paint()..color = const Color(0x55FF5A7A);
     for (final sx in [-1.0, 1.0]) {
       canvas.drawOval(
-        Rect.fromCenter(center: c + Offset(sx * 0.225, 0.075), width: 0.12, height: 0.07),
+        Rect.fromCenter(
+          center: c + Offset(sx * 0.225, 0.075),
+          width: 0.12,
+          height: 0.07,
+        ),
         blush,
       );
     }
@@ -140,11 +250,21 @@ void _paintEyes(Canvas canvas, Kafa k, Offset c) {
         canvas.drawCircle(e + const Offset(0.012, 0.01), 0.042, pupil);
         canvas.drawCircle(e + const Offset(-0.004, -0.012), 0.014, white);
       case KafaEyes.happy:
-        canvas.drawArc(Rect.fromCircle(center: e + const Offset(0, 0.03), radius: 0.055), pi * 1.1, pi * 0.8,
-            false, _stroke(0.035));
+        canvas.drawArc(
+          Rect.fromCircle(center: e + const Offset(0, 0.03), radius: 0.055),
+          pi * 1.1,
+          pi * 0.8,
+          false,
+          _stroke(0.035),
+        );
       case KafaEyes.sleepy:
-        canvas.drawArc(Rect.fromCircle(center: e - const Offset(0, 0.02), radius: 0.055), pi * 0.15, pi * 0.7,
-            false, _stroke(0.032));
+        canvas.drawArc(
+          Rect.fromCircle(center: e - const Offset(0, 0.02), radius: 0.055),
+          pi * 0.15,
+          pi * 0.7,
+          false,
+          _stroke(0.032),
+        );
       case KafaEyes.glasses:
         canvas.drawCircle(e, 0.085, _fill(const Color(0xCCFFFFFF)));
         canvas.drawCircle(e + const Offset(0.008, 0.008), 0.036, pupil);
@@ -156,29 +276,49 @@ void _paintEyes(Canvas canvas, Kafa k, Offset c) {
     }
   }
   if (k.eyes == KafaEyes.glasses) {
-    canvas.drawLine(c + const Offset(-0.05, -0.05), c + const Offset(0.05, -0.05), _stroke(0.03));
+    canvas.drawLine(
+      c + const Offset(-0.05, -0.05),
+      c + const Offset(0.05, -0.05),
+      _stroke(0.03),
+    );
   }
 }
 
 void _paintMouth(Canvas canvas, Kafa k, Offset c) {
   final m = c + const Offset(0, 0.13);
-  final smileRect = Rect.fromCenter(center: m - const Offset(0, 0.03), width: 0.2, height: 0.12);
+  final smileRect = Rect.fromCenter(
+    center: m - const Offset(0, 0.03),
+    width: 0.2,
+    height: 0.12,
+  );
   switch (k.mouth) {
     case KafaMouth.smile:
       canvas.drawArc(smileRect, pi * 0.12, pi * 0.76, false, _stroke(0.035));
     case KafaMouth.open:
-      final rect = Rect.fromCenter(center: m - const Offset(0, 0.005), width: 0.19, height: 0.14);
+      final rect = Rect.fromCenter(
+        center: m - const Offset(0, 0.005),
+        width: 0.19,
+        height: 0.14,
+      );
       final path = Path()
         ..addArc(rect, 0, pi)
         ..close();
       canvas.drawPath(path, _fill(const Color(0xFF8E2344)));
       canvas.save();
       canvas.clipPath(path);
-      canvas.drawCircle(m + const Offset(0, 0.075), 0.06, _fill(const Color(0xFFFF7A99)));
+      canvas.drawCircle(
+        m + const Offset(0, 0.075),
+        0.06,
+        _fill(const Color(0xFFFF7A99)),
+      );
       canvas.restore();
       canvas.drawPath(path, _stroke(0.028));
     case KafaMouth.tongue:
-      canvas.drawCircle(m + const Offset(0.035, 0.035), 0.035, _fill(const Color(0xFFFF7A99)));
+      canvas.drawCircle(
+        m + const Offset(0.035, 0.035),
+        0.035,
+        _fill(const Color(0xFFFF7A99)),
+      );
       canvas.drawCircle(m + const Offset(0.035, 0.035), 0.035, _stroke(0.022));
       canvas.drawArc(smileRect, pi * 0.12, pi * 0.76, false, _stroke(0.035));
     case KafaMouth.o:
@@ -195,8 +335,10 @@ void _paintTopBack(Canvas canvas, Kafa k, Offset c, double r, Paint outline) {
       final path = Path();
       for (var i = 0; i < 5; i++) {
         final a = pi + pi * (0.12 + i * 0.19);
-        final base1 = c + Offset(cos(a - 0.22) * r * 0.92, sin(a - 0.22) * r * 0.92);
-        final base2 = c + Offset(cos(a + 0.22) * r * 0.92, sin(a + 0.22) * r * 0.92);
+        final base1 =
+            c + Offset(cos(a - 0.22) * r * 0.92, sin(a - 0.22) * r * 0.92);
+        final base2 =
+            c + Offset(cos(a + 0.22) * r * 0.92, sin(a + 0.22) * r * 0.92);
         final tip = c + Offset(cos(a) * r * 1.42, sin(a) * r * 1.42);
         path
           ..moveTo(base1.dx, base1.dy)
@@ -217,8 +359,18 @@ void _paintTopBack(Canvas canvas, Kafa k, Offset c, double r, Paint outline) {
       for (final sx in [-1.0, 1.0]) {
         final path = Path()
           ..moveTo(c.dx + sx * 0.22, c.dy - 0.24)
-          ..quadraticBezierTo(c.dx + sx * 0.5, c.dy - 0.34, c.dx + sx * 0.44, c.dy - 0.6)
-          ..quadraticBezierTo(c.dx + sx * 0.36, c.dy - 0.38, c.dx + sx * 0.12, c.dy - 0.32)
+          ..quadraticBezierTo(
+            c.dx + sx * 0.5,
+            c.dy - 0.34,
+            c.dx + sx * 0.44,
+            c.dy - 0.6,
+          )
+          ..quadraticBezierTo(
+            c.dx + sx * 0.36,
+            c.dy - 0.38,
+            c.dx + sx * 0.12,
+            c.dy - 0.32,
+          )
           ..close();
         canvas.drawPath(path, _fill(const Color(0xFFFFF1D0)));
         canvas.drawPath(path, outline);
@@ -227,7 +379,12 @@ void _paintTopBack(Canvas canvas, Kafa k, Offset c, double r, Paint outline) {
       for (final dy in [0.0, 0.07]) {
         final path = Path()
           ..moveTo(c.dx + 0.33, c.dy - 0.2)
-          ..quadraticBezierTo(c.dx + 0.5, c.dy - 0.22 + dy, c.dx + 0.56, c.dy - 0.08 + dy)
+          ..quadraticBezierTo(
+            c.dx + 0.5,
+            c.dy - 0.22 + dy,
+            c.dx + 0.56,
+            c.dy - 0.08 + dy,
+          )
           ..lineTo(c.dx + 0.48, c.dy - 0.1 + dy)
           ..close();
         canvas.drawPath(path, _fill(k.topColor));
@@ -253,7 +410,9 @@ void _paintTopFront(Canvas canvas, Kafa k, Offset c, double r, Paint outline) {
       canvas.drawPath(dome, _fill(k.topColor));
       canvas.drawPath(dome, outline);
       final brim = RRect.fromRectAndRadius(
-          Rect.fromLTWH(c.dx - 0.05, c.dy - 0.16, 0.46, 0.08), const Radius.circular(0.04));
+        Rect.fromLTWH(c.dx - 0.05, c.dy - 0.16, 0.46, 0.08),
+        const Radius.circular(0.04),
+      );
       canvas.drawRRect(brim, _fill(Color.lerp(k.topColor, _ink, 0.2)!));
       canvas.drawRRect(brim, outline);
       canvas.drawCircle(c - const Offset(0, 0.46), 0.035, _fill(Colors.white));
@@ -282,8 +441,13 @@ void _paintTopFront(Canvas canvas, Kafa k, Offset c, double r, Paint outline) {
       canvas.drawPath(dome, _fill(k.topColor));
       canvas.drawPath(dome, outline);
       final band = RRect.fromRectAndRadius(
-          Rect.fromLTWH(c.dx - r * 0.95, c.dy - 0.2, r * 1.9, 0.09), const Radius.circular(0.04));
-      canvas.drawRRect(band, _fill(Color.lerp(k.topColor, Colors.white, 0.35)!));
+        Rect.fromLTWH(c.dx - r * 0.95, c.dy - 0.2, r * 1.9, 0.09),
+        const Radius.circular(0.04),
+      );
+      canvas.drawRRect(
+        band,
+        _fill(Color.lerp(k.topColor, Colors.white, 0.35)!),
+      );
       canvas.drawRRect(band, outline);
       canvas.drawCircle(c - const Offset(0, 0.54), 0.07, _fill(Colors.white));
       canvas.drawCircle(c - const Offset(0, 0.54), 0.07, outline);
@@ -298,7 +462,11 @@ void _paintTopFront(Canvas canvas, Kafa k, Offset c, double r, Paint outline) {
         canvas.drawPath(wing, _fill(k.topColor));
         canvas.drawPath(wing, outline);
       }
-      canvas.drawCircle(knot, 0.045, _fill(Color.lerp(k.topColor, _ink, 0.15)!));
+      canvas.drawCircle(
+        knot,
+        0.045,
+        _fill(Color.lerp(k.topColor, _ink, 0.15)!),
+      );
       canvas.drawCircle(knot, 0.045, outline);
     case KafaTop.horns:
       final helmet = _dome(c - const Offset(0, 0.12), r * 0.92);
@@ -306,13 +474,21 @@ void _paintTopFront(Canvas canvas, Kafa k, Offset c, double r, Paint outline) {
       canvas.drawPath(helmet, outline);
       for (var i = -2; i <= 2; i++) {
         canvas.drawCircle(
-            c + Offset(i * 0.1, -0.16 - (i.abs() == 2 ? 0.03 : 0)), 0.018, _fill(const Color(0xFFD7DEE8)));
+          c + Offset(i * 0.1, -0.16 - (i.abs() == 2 ? 0.03 : 0)),
+          0.018,
+          _fill(const Color(0xFFD7DEE8)),
+        );
       }
     case KafaTop.nightcap:
       final path = Path()
         ..moveTo(c.dx - r * 0.95, c.dy - 0.12)
         ..quadraticBezierTo(c.dx - 0.05, c.dy - 0.75, c.dx + 0.42, c.dy - 0.5)
-        ..quadraticBezierTo(c.dx + 0.2, c.dy - 0.35, c.dx + r * 0.95, c.dy - 0.12)
+        ..quadraticBezierTo(
+          c.dx + 0.2,
+          c.dy - 0.35,
+          c.dx + r * 0.95,
+          c.dy - 0.12,
+        )
         ..close();
       canvas.drawPath(path, _fill(k.topColor));
       canvas.save();
@@ -322,11 +498,18 @@ void _paintTopFront(Canvas canvas, Kafa k, Offset c, double r, Paint outline) {
         ..strokeWidth = 0.05;
       for (var i = 0; i < 6; i++) {
         canvas.drawLine(
-            Offset(c.dx - 0.5 + i * 0.18, c.dy), Offset(c.dx - 0.2 + i * 0.18, c.dy - 0.8), stripe);
+          Offset(c.dx - 0.5 + i * 0.18, c.dy),
+          Offset(c.dx - 0.2 + i * 0.18, c.dy - 0.8),
+          stripe,
+        );
       }
       canvas.restore();
       canvas.drawPath(path, outline);
-      canvas.drawCircle(Offset(c.dx + 0.44, c.dy - 0.48), 0.065, _fill(Colors.white));
+      canvas.drawCircle(
+        Offset(c.dx + 0.44, c.dy - 0.48),
+        0.065,
+        _fill(Colors.white),
+      );
       canvas.drawCircle(Offset(c.dx + 0.44, c.dy - 0.48), 0.065, outline);
     case KafaTop.captain:
       final hat = Path()
@@ -340,11 +523,16 @@ void _paintTopFront(Canvas canvas, Kafa k, Offset c, double r, Paint outline) {
       final band = Rect.fromLTWH(c.dx - 0.32, c.dy - 0.3, 0.64, 0.1);
       canvas.drawRect(band, _fill(k.topColor));
       canvas.drawRect(band, outline);
-      final visor =
-          RRect.fromRectAndRadius(Rect.fromLTWH(c.dx - 0.34, c.dy - 0.22, 0.68, 0.07), const Radius.circular(0.035));
+      final visor = RRect.fromRectAndRadius(
+        Rect.fromLTWH(c.dx - 0.34, c.dy - 0.22, 0.68, 0.07),
+        const Radius.circular(0.035),
+      );
       canvas.drawRRect(visor, _fill(k.topColor));
       canvas.drawRRect(visor, outline);
-      canvas.drawPath(starPath(Offset(c.dx, c.dy - 0.41), 0.06, 0.027), _fill(const Color(0xFFFFC83D)));
+      canvas.drawPath(
+        starPath(Offset(c.dx, c.dy - 0.41), 0.06, 0.027),
+        _fill(const Color(0xFFFFC83D)),
+      );
     case KafaTop.headband:
       // Dikenli saç tutamı (bandın üstünde).
       final tuft = Path()
@@ -360,11 +548,18 @@ void _paintTopFront(Canvas canvas, Kafa k, Offset c, double r, Paint outline) {
       canvas.drawPath(tuft, outline);
       canvas.save();
       canvas.clipPath(Path()..addOval(Rect.fromCircle(center: c, radius: r)));
-      canvas.drawRect(Rect.fromLTWH(c.dx - r, c.dy - 0.25, r * 2, 0.1), _fill(k.topColor));
+      canvas.drawRect(
+        Rect.fromLTWH(c.dx - r, c.dy - 0.25, r * 2, 0.1),
+        _fill(k.topColor),
+      );
       canvas.restore();
       for (final dy in [-0.25, -0.15]) {
         final half = sqrt(r * r - dy * dy) - 0.01;
-        canvas.drawLine(Offset(c.dx - half, c.dy + dy), Offset(c.dx + half, c.dy + dy), _stroke(0.02));
+        canvas.drawLine(
+          Offset(c.dx - half, c.dy + dy),
+          Offset(c.dx + half, c.dy + dy),
+          _stroke(0.02),
+        );
       }
     default:
       break;
@@ -392,7 +587,11 @@ Path starPath(Offset center, double outer, double inner) {
 ui.Image renderKafaImage(Kafa k, int pixelSize) {
   final recorder = ui.PictureRecorder();
   final canvas = Canvas(recorder);
-  paintKafa(canvas, Rect.fromLTWH(0, 0, pixelSize.toDouble(), pixelSize.toDouble()), k);
+  paintKafa(
+    canvas,
+    Rect.fromLTWH(0, 0, pixelSize.toDouble(), pixelSize.toDouble()),
+    k,
+  );
   return recorder.endRecording().toImageSync(pixelSize, pixelSize);
 }
 
@@ -406,7 +605,12 @@ class KafaView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final view = Image.asset(kafa.imageAsset, width: size, height: size, fit: BoxFit.contain);
+    final view = Image.asset(
+      kafa.imageAsset,
+      width: size,
+      height: size,
+      fit: BoxFit.contain,
+    );
     if (!locked) return view;
     return ColorFiltered(
       colorFilter: const ColorFilter.matrix(<double>[

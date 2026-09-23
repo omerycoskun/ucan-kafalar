@@ -7,16 +7,28 @@ import 'arcade.dart';
 import 'flappy_game.dart';
 
 /// Uç modunda oyuncunun kafası.
-class Flyer extends KafaSprite with CollisionCallbacks, HasGameReference<FlyGame> {
-  Flyer({required super.kafa, required Vector2 position}) : super(size: 104, position: position, priority: 5);
+class Flyer extends KafaSprite
+    with CollisionCallbacks, HasGameReference<FlyGame> {
+  Flyer({required super.kafa, required Vector2 position})
+    : super(size: spriteSize, position: position, priority: 5);
+
+  /// Karakter ekranda engelleri kapatmayacak kadar kompakt; çarpışma alanıysa
+  /// kafanın görünen ana gövdesini takip edecek kadar geniş tutulur.
+  static const double spriteSize = 86;
+  static const double hitboxRadius = 34;
 
   double velocity = 0;
 
   @override
   FutureOr<void> onLoad() async {
     await super.onLoad();
-    // Görsel omuzlarla birlikte: çarpışma alanı eski boyutta (r≈25) ve kafaya yakın.
-    add(CircleHitbox(radius: 25, position: size / 2 + Vector2(0, size.y * 0.02), anchor: Anchor.center));
+    add(
+      CircleHitbox(
+        radius: hitboxRadius,
+        position: size / 2 + Vector2(0, size.y * 0.02),
+        anchor: Anchor.center,
+      ),
+    );
   }
 
   void flap() => velocity = FlyGame.flapVelocity;
@@ -34,20 +46,23 @@ class Flyer extends KafaSprite with CollisionCallbacks, HasGameReference<FlyGame
     velocity += FlyGame.gravity * dt;
     position.y += velocity * dt;
     angle = (velocity / 1100).clamp(-0.4, 0.8);
-    if (position.y - size.y / 2 < 0) {
-      position.y = size.y / 2;
+    if (position.y - hitboxRadius < 0) {
+      position.y = hitboxRadius;
       velocity = 0;
     }
     // Zemin kontrolü çarpışmadan bağımsız: hiçbir durumda zeminin altına düşmesin.
     final groundTop = ArcadeGame.virtualSize.y - FlyGame.groundHeight;
-    if (position.y + size.y * 0.3 >= groundTop) {
-      position.y = groundTop - size.y * 0.3;
+    if (position.y + hitboxRadius >= groundTop) {
+      position.y = groundTop - hitboxRadius;
       game.endGame();
     }
   }
 
   @override
-  void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
+  void onCollisionStart(
+    Set<Vector2> intersectionPoints,
+    PositionComponent other,
+  ) {
     super.onCollisionStart(intersectionPoints, other);
     if (game.state != GameState.playing) return;
     if (other is StarPickup) {

@@ -28,6 +28,14 @@ void main() {
     expect(store.bestScore(GameMode.fly), 0);
   });
 
+  test('ödüllü reklam yıldız ekler ve yeni açılan karakteri döner', () async {
+    final store = GameStore.instance;
+    store.setStarsForTest(kKafalar[1].price - GameStore.rewardedStarAmount);
+    final unlocked = await store.addRewardedStars();
+    expect(store.totalStars, kKafalar[1].price);
+    expect(unlocked.map((k) => k.id), [kKafalar[1].id]);
+  });
+
   test('karakter görseli ve müziği numarasıyla eşleşir', () {
     expect(kafaById(7).musicPath, 'background_music_7.mp3');
     expect(kafaById(7).imageAsset, 'assets/images/characters/character_7.png');

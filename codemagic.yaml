@@ -46,7 +46,7 @@ workflows:
       - name: IPA derle
         script: |
           flutter build ipa --release \
-            --build-name=1.0.0 \
+            --build-name=1.1.0 \
             --build-number=$(($(date +%s) / 60)) \
             --export-options-plist=/Users/builder/export_options.plist
     artifacts:
@@ -78,12 +78,12 @@ workflows:
       - name: AAB derle (Google Play için)
         script: |
           flutter build appbundle --release \
-            --build-name=1.0.0 \
+            --build-name=1.1.0 \
             --build-number=$(($(date +%s) / 60))
       - name: APK derle (telefona doğrudan kurmak için test)
         script: |
           flutter build apk --release \
-            --build-name=1.0.0 \
+            --build-name=1.1.0 \
             --build-number=$(($(date +%s) / 60))
     artifacts:
       - build/app/outputs/bundle/release/*.aab

@@ -58,13 +58,16 @@ class RunOutcome {
 }
 
 /// [totalStars] toplam yıldızla açık olan kafaların sayısı (saf, test edilebilir).
-int unlockedCountFor(int totalStars) => kKafalar.where((k) => totalStars >= k.price).length;
+int unlockedCountFor(int totalStars) =>
+    kKafalar.where((k) => totalStars >= k.price).length;
 
 /// Tüm kalıcı durum ve ayarların tek merkezden yönetimi.
 class GameStore extends ChangeNotifier {
   GameStore._();
 
   static final GameStore instance = GameStore._();
+
+  static const int rewardedStarAmount = 10;
 
   static const _kBestFly = 'best_fly';
   static const _kBestJump = 'best_jump';
@@ -107,8 +110,27 @@ class GameStore extends ChangeNotifier {
 
   bool isUnlocked(Kafa k) => _stars >= k.price;
 
+  /// Tamamlanan bir ödüllü reklamın yıldızlarını kalıcı olarak ekler.
+  /// Dönüş değeri bu ödülle yeni açılan karakterlerdir.
+  Future<List<Kafa>> addRewardedStars() async {
+    final before = unlockedCountFor(_stars);
+    _stars += rewardedStarAmount;
+    await _prefs?.setInt(_kStars, _stars);
+    final after = unlockedCountFor(_stars);
+    notifyListeners();
+    return kKafalar
+        .where((k) => k.price <= _stars)
+        .skip(before)
+        .take(after - before)
+        .toList();
+  }
+
   /// Oyun bitince çağrılır: rekoru ve yıldızları kaydeder, yeni açılanları döner.
-  Future<RunOutcome> registerRun(GameMode mode, {required int score, required int stars}) async {
+  Future<RunOutcome> registerRun(
+    GameMode mode, {
+    required int score,
+    required int stars,
+  }) async {
     final before = unlockedCountFor(_stars);
     _stars += stars;
     if (mode == GameMode.fly && score > _bestFly) _bestFly = score;
@@ -126,7 +148,11 @@ class GameStore extends ChangeNotifier {
       bestScore: bestScore(mode),
       starsGained: stars,
       totalStars: _stars,
-      unlocked: kKafalar.where((k) => k.price <= _stars).skip(before).take(after - before).toList(),
+      unlocked: kKafalar
+          .where((k) => k.price <= _stars)
+          .skip(before)
+          .take(after - before)
+          .toList(),
     );
   }
 

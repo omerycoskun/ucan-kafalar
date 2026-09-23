@@ -18,7 +18,9 @@ class JumpGame extends ArcadeGame {
 
   static const double gravity = 1300;
   static const double jumpVelocity = -760;
-  static const double _tiltFactor = 66; // eğim → yatay hız
+  static const double _tiltFactor = 110; // eğim → yatay hız
+  static const double _tiltResponse = 22;
+  static const double _maxHorizontalSpeed = 520;
 
   /// Oyuncu ekranda bu yükseklikte tutulur; üstüne çıkınca dünya aşağı kayar.
   static const double scrollLine = 300;
@@ -70,7 +72,8 @@ class JumpGame extends ArcadeGame {
   }
 
   void _spawnLedgeAt(double y) {
-    final x = Ledge.halfWidth + _random.nextDouble() * (_w - Ledge.halfWidth * 2);
+    final x =
+        Ledge.halfWidth + _random.nextDouble() * (_w - Ledge.halfWidth * 2);
     final moving = _random.nextDouble() < _movingChance;
     world.add(Ledge(position: Vector2(x, y), moving: moving));
 
@@ -78,8 +81,14 @@ class JumpGame extends ArcadeGame {
       world.add(StarPickup(position: Vector2(x, y - 46)));
     }
     if (score > 20 && _random.nextDouble() < _enemyChance) {
-      final ex = Enemy.diameter / 2 + _random.nextDouble() * (_w - Enemy.diameter);
-      world.add(Enemy(position: Vector2(ex, y - _platformGap * 0.5), dir: _random.nextBool() ? 1 : -1));
+      final ex =
+          Enemy.diameter / 2 + _random.nextDouble() * (_w - Enemy.diameter);
+      world.add(
+        Enemy(
+          position: Vector2(ex, y - _platformGap * 0.5),
+          dir: _random.nextBool() ? 1 : -1,
+        ),
+      );
     }
   }
 
@@ -106,8 +115,14 @@ class JumpGame extends ArcadeGame {
 
     // Yatay: eğim öncelikli; yoksa parmak.
     if (_tiltActive) {
-      final targetVx = -_tiltX * _tiltFactor;
-      jumper.velocity.x += (targetVx - jumper.velocity.x) * (dt * 14).clamp(0, 1);
+      // Çok küçük sensör gürültüsünü yok say; gerçek eğimde daha hızlı tepki ver.
+      final tilt = _tiltX.abs() < 0.12 ? 0.0 : _tiltX;
+      final targetVx = (-tilt * _tiltFactor).clamp(
+        -_maxHorizontalSpeed,
+        _maxHorizontalSpeed,
+      );
+      jumper.velocity.x +=
+          (targetVx - jumper.velocity.x) * (dt * _tiltResponse).clamp(0, 1);
       jumper.position.x += jumper.velocity.x * dt;
       if (jumper.position.x < 0) jumper.position.x += _w;
       if (jumper.position.x > _w) jumper.position.x -= _w;
@@ -135,7 +150,9 @@ class JumpGame extends ArcadeGame {
         } else if (c is Enemy || (c is StarPickup && !c.decorative)) {
           final p = c as PositionComponent;
           p.position.y += delta;
-          if (p.position.y > max(_h, visibleRect.bottom) + 40) p.removeFromParent();
+          if (p.position.y > max(_h, visibleRect.bottom) + 40) {
+            p.removeFromParent();
+          }
         }
       }
       if (topY == double.infinity) topY = 0;
@@ -154,7 +171,9 @@ class JumpGame extends ArcadeGame {
       if (scoreText.text != '$score') scoreText.text = '$score';
     }
 
-    if (jumper.position.y - jumper.size.y / 2 > max(_h, visibleRect.bottom)) endGame();
+    if (jumper.position.y - jumper.size.y / 2 > max(_h, visibleRect.bottom)) {
+      endGame();
+    }
   }
 
   /// Jumper bir platforma üstten değince çağrılır.
@@ -168,7 +187,9 @@ class JumpGame extends ArcadeGame {
     _climb = 0;
     _scoreClock = 0;
     for (final c in world.children.toList()) {
-      if (c is Ledge || c is Enemy || (c is StarPickup && !c.decorative)) c.removeFromParent();
+      if (c is Ledge || c is Enemy || (c is StarPickup && !c.decorative)) {
+        c.removeFromParent();
+      }
     }
     jumper.reset(_startPosition);
     _spawnInitialPlatforms();
@@ -178,7 +199,9 @@ class JumpGame extends ArcadeGame {
   @override
   void prepareContinue() {
     jumper.reset(Vector2(_w / 2, scrollLine));
-    world.children.whereType<Enemy>().toList().forEach((e) => e.removeFromParent());
+    world.children.whereType<Enemy>().toList().forEach(
+      (e) => e.removeFromParent(),
+    );
     world.add(Ledge(position: Vector2(_w / 2, scrollLine + 70)));
     _aimX = null;
     jumper.velocity.y = jumpVelocity;

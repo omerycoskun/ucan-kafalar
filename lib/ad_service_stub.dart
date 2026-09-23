@@ -13,5 +13,7 @@ class AdService {
   bool get canShowRewarded => false;
 
   /// Ödüllü reklam gösterir; ödül kazanılırsa true. Web'de her zaman false.
+  Future<bool> showRewarded() async => false;
+
   Future<bool> showRewardedContinue() async => false;
 }

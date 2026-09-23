@@ -84,9 +84,12 @@ class AdService {
   bool get canShowRewarded => _rewarded != null;
 
   /// Ödüllü reklam gösterir; kullanıcı ödülü kazanırsa (izlerse) true döner.
-  Future<bool> showRewardedContinue() async {
+  Future<bool> showRewarded() async {
     final ad = _rewarded;
-    if (ad == null) return false;
+    if (ad == null) {
+      _loadRewarded();
+      return false;
+    }
     _rewarded = null;
     var earned = false;
     final completer = Completer<bool>();
@@ -105,6 +108,8 @@ class AdService {
     await ad.show(onUserEarnedReward: (ad, reward) => earned = true);
     return completer.future;
   }
+
+  Future<bool> showRewardedContinue() => showRewarded();
 }
 
 /// iOS ATT (takip izni) penceresini GÜVENİLİR biçimde göster.

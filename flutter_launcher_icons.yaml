@@ -11,6 +11,6 @@ flutter_launcher_icons:
   adaptive_icon_foreground: "assets/icon/app_icon.png"
   # Web favicon + PWA ikonları.
   web:
-    generated: true
+    generate: true
     background_color: "#0d1531"
     theme_color: "#0d1531"

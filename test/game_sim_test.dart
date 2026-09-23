@@ -55,13 +55,42 @@ void main() {
         await game.ready();
         game.startRun();
         // Kafayı ekran ortasında tutan basit "otopilot" (kulelere çarpabilir).
-        step(game, 2.5, each: (_) {
-          if (game.flyer.position.y > 360 && game.flyer.velocity > 0) game.flyer.flap();
-        });
+        step(
+          game,
+          2.5,
+          each: (_) {
+            if (game.flyer.position.y > 360 && game.flyer.velocity > 0) {
+              game.flyer.flap();
+            }
+          },
+        );
         await game.ready();
         expect(game.flyer.isMounted, isTrue);
-        expect(game.flyer.position.y, inInclusiveRange(0, ArcadeGame.virtualSize.y));
+        expect(
+          game.flyer.position.y,
+          inInclusiveRange(0, ArcadeGame.virtualSize.y),
+        );
         expect(game.world.children.whereType<TowerPair>(), isNotEmpty);
+      },
+    );
+
+    testWithGame<FlyGame>(
+      'görünür kafaya değen kule çarpışmayı kaçırmaz',
+      () => FlyGame(onGameOver: (_) {}),
+      (game) async {
+        await game.ready();
+        await game.world.add(
+          TowerPair(
+            x: game.flyer.position.x - TowerPair.towerWidth / 2,
+            gapY: ArcadeGame.virtualSize.y,
+            palette: 0,
+            withStar: false,
+          ),
+        );
+        await game.ready();
+        game.startRun();
+        step(game, 0.1);
+        expect(game.state, GameState.gameOver);
       },
     );
   });
@@ -76,7 +105,10 @@ void main() {
       game.updateTree(2.0); // 2 sn donmuş kare
       step(game, 1);
       expect(game.state, GameState.gameOver);
-      expect(game.flyer.position.y, lessThan(ArcadeGame.virtualSize.y - FlyGame.groundHeight));
+      expect(
+        game.flyer.position.y,
+        lessThan(ArcadeGame.virtualSize.y - FlyGame.groundHeight),
+      );
     },
   );
 
