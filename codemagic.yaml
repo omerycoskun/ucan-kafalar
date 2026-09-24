@@ -8,7 +8,7 @@
 #    bunu otomatik kullanır. (İsim farklıysa integration adını belirt.)
 # 3. App Store Connect'te "Uçan Kafalar" uygulamasını oluştur; bundle id:
 #    com.ucankafalar.flappybird  (aşağıdakiyle birebir aynı olmalı).
-# 4. Bu workflow'u çalıştır → imzalı .ipa üretir ve TestFlight'a yükler.
+# 4. Bu workflow'u çalıştır → imzalı .ipa üretir ve App Store incelemesine gönderir.
 
 workflows:
   ios-release:
@@ -54,8 +54,9 @@ workflows:
     publishing:
       app_store_connect:
         auth: integration
-        submit_to_testflight: true
-        # Apple incelemesine otomatik gönder; onaylanınca mağazada yayınla.
+        # Dış TestFlight incelemesi Beta App Description ister; bu sürüm doğrudan
+        # App Store incelemesine gönderilir ve onaydan sonra otomatik yayınlanır.
+        submit_to_testflight: false
         submit_to_app_store: true
         release_type: AFTER_APPROVAL
 
